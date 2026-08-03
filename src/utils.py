@@ -1,7 +1,7 @@
 import json
 
-from species_database import SpeciesDatabase
 from pokemon_species import PokemonSpecies
+from species_database import SpeciesDatabase
 
 
 def load_species_db(path_to_json: str = "../data/species.json") -> SpeciesDatabase:

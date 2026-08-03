@@ -1,5 +1,5 @@
-from stats.stat import Stat, MIN_STAGE, MAX_STAGE
-from stats.stat_stages import StatStages
+from base_stats.stat import MAX_STAGE, MIN_STAGE, Stat
+from base_stats.stat_stages import StatStages
 
 
 def get_stage(stages: StatStages, stat: Stat) -> int:
@@ -102,9 +102,7 @@ def stage_multiplier(
     :return: The multiplier for the relevant stat.
     """
     if not MIN_STAGE <= stage <= MAX_STAGE:
-        raise ValueError(
-            f"Illegal stat stage: {stage}"
-        )
+        raise ValueError(f"Illegal stat stage: {stage}")
     base = stat.stage_base
     if stage >= 0:
         return (base + stage) / base

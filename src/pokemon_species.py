@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from stats.stats import Stats
+from stats.base_stats import BaseStats
 
 
 @dataclass(slots=True, frozen=True)
@@ -9,12 +9,12 @@ class PokemonSpecies:
 
     types: tuple[str, ...]
 
-    base_stats: Stats
+    base_stats: BaseStats
 
     @classmethod
     def from_json(cls, json_data: dict, name: str):
         return PokemonSpecies(
             name=name,
             types=tuple(json_data["types"]),
-            base_stats=Stats.from_json(json_data["base_stats"]),
+            base_stats=BaseStats.from_json(json_data["base_stats"]),
         )

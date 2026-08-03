@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from stats.stat import DEFAULT_STAGE
+from base_stats.stat import DEFAULT_STAGE
 
 
 @dataclass(slots=True)

@@ -1,9 +1,9 @@
 from enum import Enum, auto
 
-
 MIN_STAGE = -6
 MAX_STAGE = 6
 DEFAULT_STAGE = 0
+
 
 class Stat(Enum):
     ATTACK = auto()
