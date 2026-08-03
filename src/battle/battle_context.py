@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from battle import BattleState
+from battle.battle_state import BattleState
 from move import MoveTarget
 from pokemon import Pokemon
 

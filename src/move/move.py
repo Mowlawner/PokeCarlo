@@ -1,10 +1,14 @@
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from move.move_category import MoveCategory
 from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect, resolve_defaults
 from move_effects.move_effect import MoveEffect
 from pokemon_types import Type
+
+if TYPE_CHECKING:
+    from pokemon import Pokemon
 
 
 @dataclass(slots=True, frozen=True)
@@ -39,3 +43,11 @@ class Move:
             isinstance(effect, DamageEffect) for effect in self.effects
         ):
             raise ValueError("Status moves cannot have DamageEffects.")
+
+    def apply(
+        self,
+        user: "Pokemon",
+        targets: tuple["Pokemon", ...],
+    ) -> None:
+        for effect in self.effects:
+            effect.apply(user=user, targets=targets)

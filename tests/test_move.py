@@ -199,3 +199,18 @@ def test_move_can_have_multiple_effects():
     assert len(move.effects) == 2
     assert isinstance(move.effects[0], DamageEffect)
     assert isinstance(move.effects[1], StatChangeEffect)
+
+
+def test_move_apply_executes_damage_effect(
+    garchomp,
+    opponent_garchomp,
+    earthquake,
+):
+    starting_hp = opponent_garchomp.current_hp
+
+    earthquake.apply(
+        user=garchomp,
+        targets=(opponent_garchomp,),
+    )
+
+    assert opponent_garchomp.current_hp < starting_hp

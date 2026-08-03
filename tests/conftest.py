@@ -2,7 +2,8 @@ import pytest
 
 from battle import BattleState
 from battle.battle_context import BattleContext
-from move import Move, MoveCategory
+from battle.battle_resolver import BattleResolver
+from move import Move, MoveCategory, MoveTarget
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon import Pokemon
@@ -35,6 +36,7 @@ def earthquake() -> Move:
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=100),),
+        targeting=MoveTarget.ALL_OTHERS,
     )
 
 
@@ -165,3 +167,8 @@ def ally_garchomp(garchomp_species, garchomp_set) -> Pokemon:
 @pytest.fixture
 def second_opponent_garchomp(garchomp_set) -> Pokemon:
     return Pokemon.from_set(garchomp_set)
+
+
+@pytest.fixture
+def battle_resolver(battle_context) -> BattleResolver:
+    return BattleResolver(battle_context)
