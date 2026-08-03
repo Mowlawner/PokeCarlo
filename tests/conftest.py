@@ -1,6 +1,6 @@
 import pytest
 
-from move.move import Move, MoveCategory
+from move import Move, MoveCategory
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_set import PokemonSet
@@ -21,7 +21,7 @@ def tackle() -> Move:
         accuracy=100,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect,),
+        effects=(DamageEffect(),),
     )
 
 
@@ -33,7 +33,7 @@ def earthquake() -> Move:
         accuracy=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect,),
+        effects=(DamageEffect(),),
     )
 
 
@@ -45,7 +45,7 @@ def dragon_claw() -> Move:
         accuracy=100,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect,),
+        effects=(DamageEffect(),),
     )
 
 
@@ -61,7 +61,7 @@ def swords_dance() -> Move:
             StatChangeEffect(
                 stat=Stat.ATTACK,
                 stages=2,
-            )
+            ),
         ),
     )
 
@@ -74,7 +74,7 @@ def high_horsepower() -> Move:
         accuracy=95,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect,),
+        effects=(DamageEffect(),),
     )
 
 

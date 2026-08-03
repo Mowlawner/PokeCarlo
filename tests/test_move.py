@@ -2,7 +2,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from move.move import Move, MoveCategory
+from move import Move, MoveCategory, MoveTarget
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_types import Type
@@ -154,3 +154,63 @@ def test_move_category_is_enum():
     )
 
     assert move.category == MoveCategory.STATUS
+
+
+def test_status_move_cannot_have_damage_effect():
+    with pytest.raises(ValueError):
+        Move(
+            name="Fake Damage Status",
+            power=0,
+            accuracy=None,
+            move_type=Type.NORMAL,
+            category=MoveCategory.STATUS,
+            effects=(DamageEffect(),),
+        )
+
+
+def test_move_has_targeting_type():
+    move = Move(
+        name="Earthquake",
+        power=100,
+        accuracy=100,
+        move_type=Type.GROUND,
+        category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect(),),
+        targeting=MoveTarget.ALL_OTHERS,
+    )
+
+    assert move.targeting is MoveTarget.ALL_OTHERS
+
+
+def test_targeting_defaults_to_single_target():
+    move = Move(
+        name="Dragon Claw",
+        power=80,
+        accuracy=100,
+        move_type=Type.DRAGON,
+        category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect(),),
+    )
+
+    assert move.targeting is MoveTarget.SINGLE_TARGET
+
+
+def test_move_can_have_multiple_effects():
+    move = Move(
+        name="Dragon Claw",
+        power=80,
+        accuracy=100,
+        move_type=Type.DRAGON,
+        category=MoveCategory.PHYSICAL,
+        effects=(
+            DamageEffect(),
+            StatChangeEffect(
+                stat=Stat.ATTACK,
+                stages=1,
+            ),
+        ),
+    )
+
+    assert len(move.effects) == 2
+    assert isinstance(move.effects[0], DamageEffect)
+    assert isinstance(move.effects[1], StatChangeEffect)
