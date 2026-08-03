@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from base_stats.stat import Stat
+from stats.stat import Stat
 
 
 class Nature(Enum):

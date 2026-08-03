@@ -1,5 +1,5 @@
-from base_stats.stat import MAX_STAGE, MIN_STAGE, Stat
-from base_stats.stat_stages import StatStages
+from stats.stat import MAX_STAGE, MIN_STAGE, Stat
+from stats.stat_stages import StatStages
 
 
 def get_stage(stages: StatStages, stat: Stat) -> int:
