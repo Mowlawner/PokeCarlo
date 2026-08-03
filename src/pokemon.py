@@ -1,10 +1,6 @@
 from dataclasses import dataclass
 
-from move import Move
-from pokemon_species import PokemonSpecies
-from stats.evs import EVs
-from stats.ivs import IVs
-from stats.nature import Nature
+from pokemon_set import PokemonSet
 from stats.stat_calculator import calculate_stats
 from stats.stat_stages import StatStages
 from stats.stats import Stats
@@ -12,47 +8,37 @@ from stats.stats import Stats
 
 @dataclass(slots=True)
 class Pokemon:
-    species: PokemonSpecies
-
-    level: int
-
-    nature: Nature
-    ivs: IVs
-    evs: EVs
+    pokemon_set: PokemonSet
 
     stats: Stats
     current_hp: int
 
     stat_stages: StatStages
 
-    moves: tuple[Move, ...]
+    # later
+    # status: StatusCondition | None
+    # volatile_effects: ...
 
     @classmethod
-    def from_species(
+    def from_set(
         cls,
-        species: PokemonSpecies,
-        level: int,
-        nature: Nature,
-        ivs: IVs,
-        evs: EVs,
-        moves: tuple[Move, ...],
+        pokemon_set: PokemonSet,
     ) -> "Pokemon":
-        stats = calculate_stats(
-            base_stats=species.base_stats,
-            ivs=ivs,
-            evs=evs,
-            nature=nature,
-            level=level,
+        calculated_stats = calculate_stats(
+            base_stats=pokemon_set.species.base_stats,
+            ivs=pokemon_set.ivs,
+            evs=pokemon_set.evs,
+            nature=pokemon_set.nature,
+            level=pokemon_set.level,
         )
 
         return cls(
-            species=species,
-            level=level,
-            nature=nature,
-            ivs=ivs,
-            evs=evs,
-            stats=stats,
-            current_hp=stats.hp,
+            pokemon_set=pokemon_set,
+            stats=calculated_stats,
+            current_hp=calculated_stats.hp,
             stat_stages=StatStages(),
-            moves=moves,
         )
+
+    @property
+    def is_fainted(self) -> bool:
+        return self.current_hp <= 0
