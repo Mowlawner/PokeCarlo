@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from move import Move
+from move.move import Move
 from pokemon_species import PokemonSpecies
 from stats.evs import EVs
 from stats.ivs import IVs

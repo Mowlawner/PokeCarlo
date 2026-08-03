@@ -1,6 +1,8 @@
 import pytest
 
-from move import Move, MoveCategory
+from move.move import Move, MoveCategory
+from move_effects.damage_effect import DamageEffect
+from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_set import PokemonSet
 from pokemon_species import PokemonSpecies
 from pokemon_types import Type
@@ -8,6 +10,7 @@ from stats.base_stats import BaseStats
 from stats.evs import EVs
 from stats.ivs import IVs
 from stats.nature import Nature
+from stats.stat import Stat
 
 
 @pytest.fixture
@@ -18,6 +21,7 @@ def tackle() -> Move:
         accuracy=100,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect,),
     )
 
 
@@ -29,6 +33,7 @@ def earthquake() -> Move:
         accuracy=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect,),
     )
 
 
@@ -40,6 +45,7 @@ def dragon_claw() -> Move:
         accuracy=100,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect,),
     )
 
 
@@ -51,6 +57,12 @@ def swords_dance() -> Move:
         accuracy=None,  # or however you decide to represent "never misses"
         move_type=Type.NORMAL,
         category=MoveCategory.STATUS,
+        effects=(
+            StatChangeEffect(
+                stat=Stat.ATTACK,
+                stages=2,
+            )
+        ),
     )
 
 
@@ -62,6 +74,7 @@ def high_horsepower() -> Move:
         accuracy=95,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect,),
     )
 
 

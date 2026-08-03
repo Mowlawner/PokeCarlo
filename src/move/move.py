@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from move_effects.move_effect import MoveEffect
 from pokemon_types import Type
 
 
@@ -13,15 +14,11 @@ class MoveCategory(Enum):
 @dataclass(slots=True, frozen=True)
 class Move:
     name: str
-
     power: int
-
     accuracy: int | None
-
     move_type: Type
-
     category: MoveCategory
-
+    effects: tuple[MoveEffect, ...]
     priority: int = 0
 
     def __post_init__(self):

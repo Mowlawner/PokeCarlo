@@ -1,4 +1,4 @@
-from move import Move
+from move.move import Move
 from pokemon import Pokemon
 
 
