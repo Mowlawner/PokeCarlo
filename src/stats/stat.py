@@ -6,6 +6,7 @@ DEFAULT_STAGE = 0
 
 
 class Stat(Enum):
+    HP = auto()
     ATTACK = auto()
     DEFENSE = auto()
     SP_ATTACK = auto()

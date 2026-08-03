@@ -22,6 +22,8 @@ class Action:
         self,
         context: BattleContext,
     ) -> None:
+        if self.pokemon.is_fainted:
+            return
         match self.action:
             case ActionType.MOVE:
                 if self.move is not None:

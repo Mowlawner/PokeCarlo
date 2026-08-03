@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 
 from damage_calculator import calculate_damage
 from move.move_category import MoveCategory
+from move.move_context import MoveContext
+from pokemon_types.type_chart import effectiveness
 from stats.stat import Stat
 
 if TYPE_CHECKING:
@@ -23,13 +25,20 @@ class DamageEffect:
         self,
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
+        move_context: MoveContext,
     ) -> None:
+        stab = 1.5 if move_context.move_type in user.pokemon_set.species.types else 1.0
         for target in targets:
+            type_effectiveness = effectiveness(
+                move_context.move_type, target.pokemon_set.species.types
+            )
             damage = calculate_damage(
                 level=user.pokemon_set.level,
                 power=self.power,
-                attack=getattr(user.stats, self.attacking_stat.name.lower()),
-                defense=getattr(target.stats, self.defending_stat.name.lower()),
+                attack=user.stats.get(self.attacking_stat),
+                defense=target.stats.get(self.defending_stat),
+                stab=stab,
+                effectiveness=type_effectiveness,
             )
 
             target.take_damage(damage)

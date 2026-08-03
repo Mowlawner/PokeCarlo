@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from move.move_category import MoveCategory
+from move.move_context import MoveContext
 from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect, resolve_defaults
 from move_effects.move_effect import MoveEffect
@@ -50,4 +51,8 @@ class Move:
         targets: tuple["Pokemon", ...],
     ) -> None:
         for effect in self.effects:
-            effect.apply(user=user, targets=targets)
+            effect.apply(
+                user=user,
+                targets=targets,
+                move_context=MoveContext(move_type=self.move_type),
+            )

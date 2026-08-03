@@ -90,3 +90,11 @@ def test_set_stage_rejects_small_stage():
             Stat.ATTACK,
             -7,
         )
+
+
+def test_stats_get_attack(garchomp):
+    assert garchomp.stats.get(Stat.ATTACK) == garchomp.stats.attack
+
+
+def test_stats_get_special_defense(garchomp):
+    assert garchomp.stats.get(Stat.SP_DEFENSE) == garchomp.stats.sp_defense

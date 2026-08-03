@@ -10,5 +10,20 @@ class BattleResolver:
         self,
         actions: tuple[Action, ...],
     ) -> None:
-        for action in actions:
+        remaining_actions = list(actions)
+        while remaining_actions:
+            action = self.get_next_action(remaining_actions)
+            remaining_actions.remove(action)
+
             action.apply(self.context)
+
+    @staticmethod
+    def get_next_action(
+        actions: list[Action],
+    ) -> Action:
+        return max(
+            actions,
+            key=lambda action: (
+                (action.move.priority, action.pokemon.stats.speed) if action.move else 0
+            ),
+        )

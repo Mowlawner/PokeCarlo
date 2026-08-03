@@ -26,7 +26,15 @@ class BattleContext:
                 if selected_target is None:
                     raise ValueError("Single target move requires a target.")
 
-                return (selected_target,)
+                if not selected_target.is_fainted:
+                    return (selected_target,)
+
+                living_opponents = tuple(p for p in opponents if not p.is_fainted)
+
+                if living_opponents:
+                    return (living_opponents[0],)
+
+                return ()
 
             case MoveTarget.SELF:
                 return (user,)

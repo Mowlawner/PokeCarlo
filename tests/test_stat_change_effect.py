@@ -5,8 +5,8 @@ from pokemon import Pokemon
 from stats.stat import Stat
 
 
-def test_stat_change_effect_applies_to_target(garchomp_set):
-    pokemon = Pokemon.from_set(garchomp_set)
+def test_stat_change_effect_applies_to_target(jolly_garchomp_set):
+    pokemon = Pokemon.from_set(jolly_garchomp_set)
 
     effect = StatChangeEffect(
         stat=Stat.ATTACK,
@@ -21,9 +21,9 @@ def test_stat_change_effect_applies_to_target(garchomp_set):
     assert pokemon.stat_stages.attack == 2
 
 
-def test_stat_change_effect_applies_to_multiple_targets(garchomp_set):
-    first = Pokemon.from_set(garchomp_set)
-    second = Pokemon.from_set(garchomp_set)
+def test_stat_change_effect_applies_to_multiple_targets(jolly_garchomp_set):
+    first = Pokemon.from_set(jolly_garchomp_set)
+    second = Pokemon.from_set(jolly_garchomp_set)
 
     effect = StatChangeEffect(
         stat=Stat.DEFENSE,

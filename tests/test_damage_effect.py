@@ -1,4 +1,5 @@
 from move import MoveCategory
+from move.move_context import MoveContext
 from move_effects.damage_effect import DamageEffect, resolve_defaults
 from stats.stat import Stat
 
@@ -73,6 +74,7 @@ def test_damage_effect_reduces_hp(
         effect.apply(
             user=garchomp,
             targets=(garchomp,),
+            move_context=MoveContext(earthquake.move_type),
         )
 
     assert garchomp.current_hp < starting_hp

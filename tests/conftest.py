@@ -95,7 +95,20 @@ def garchomp_species() -> PokemonSpecies:
 
 
 @pytest.fixture
-def garchomp_set(
+def protect():
+    return Move(
+        name="Protect",
+        accuracy=None,
+        move_type=Type.NORMAL,
+        category=MoveCategory.STATUS,
+        effects=(),
+        targeting=MoveTarget.SELF,
+        priority=4,
+    )
+
+
+@pytest.fixture
+def jolly_garchomp_set(
     garchomp_species: PokemonSpecies,
     tackle: Move,
 ) -> PokemonSet:
@@ -124,10 +137,39 @@ def garchomp_set(
 
 
 @pytest.fixture
+def adamant_garchomp_set(
+    garchomp_species: PokemonSpecies,
+    tackle: Move,
+) -> PokemonSet:
+    return PokemonSet(
+        species=garchomp_species,
+        level=50,
+        nature=Nature.ADAMANT,
+        ivs=IVs(
+            hp=31,
+            attack=31,
+            defense=31,
+            sp_attack=31,
+            sp_defense=31,
+            speed=31,
+        ),
+        evs=EVs(
+            hp=4,
+            attack=252,
+            defense=0,
+            sp_attack=0,
+            sp_defense=0,
+            speed=252,
+        ),
+        moves=(tackle,),
+    )
+
+
+@pytest.fixture
 def garchomp(
-    garchomp_set: PokemonSet,
+    jolly_garchomp_set: PokemonSet,
 ) -> Pokemon:
-    return Pokemon.from_set(garchomp_set)
+    return Pokemon.from_set(jolly_garchomp_set)
 
 
 @pytest.fixture
@@ -155,18 +197,23 @@ def battle_context(battle_state: BattleState) -> BattleContext:
 
 
 @pytest.fixture
-def opponent_garchomp(garchomp_species, garchomp_set) -> Pokemon:
-    return Pokemon.from_set(garchomp_set)
+def opponent_garchomp(garchomp_species, jolly_garchomp_set) -> Pokemon:
+    return Pokemon.from_set(jolly_garchomp_set)
 
 
 @pytest.fixture
-def ally_garchomp(garchomp_species, garchomp_set) -> Pokemon:
-    return Pokemon.from_set(garchomp_set)
+def adamant_garchomp(garchomp_species, adamant_garchomp_set) -> Pokemon:
+    return Pokemon.from_set(adamant_garchomp_set)
 
 
 @pytest.fixture
-def second_opponent_garchomp(garchomp_set) -> Pokemon:
-    return Pokemon.from_set(garchomp_set)
+def ally_garchomp(garchomp_species, jolly_garchomp_set) -> Pokemon:
+    return Pokemon.from_set(jolly_garchomp_set)
+
+
+@pytest.fixture
+def second_opponent_garchomp(jolly_garchomp_set) -> Pokemon:
+    return Pokemon.from_set(jolly_garchomp_set)
 
 
 @pytest.fixture
