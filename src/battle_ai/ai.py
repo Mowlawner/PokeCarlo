@@ -1,5 +1,5 @@
-from src.action import Action
-from src.battle_state import BattleState
+from action import Action
+from battle_state import BattleState
 
 
 class AI:

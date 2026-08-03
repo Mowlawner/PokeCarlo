@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from src.move import Move
-from src.pokemon_species import PokemonSpecies
+from move import Move
+from pokemon_species import PokemonSpecies
 
 
 @dataclass(slots=True)

@@ -1,5 +1,5 @@
-from src.battle_ai.ai import AI
-from src.battle_state import BattleState
+from battle_ai.ai import AI
+from battle_state import BattleState
 
 
 def determine_order() -> list: ...

@@ -1,4 +1,4 @@
-from src.pokemon_species import PokemonSpecies
+from pokemon_species import PokemonSpecies
 
 
 class SpeciesDatabase:

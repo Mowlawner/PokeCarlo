@@ -1,5 +1,18 @@
 [project]
-name = "pokecarlo"
+name = "pokemon-champions-sim"
 version = "0.1.0"
+description = "Monte Carlo battle simulator for Pokemon Champions."
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "ruff>=0.12",
+    "mypy>=1.17",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

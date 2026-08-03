@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.stats.stats import Stats
+from stats.stats import Stats
 
 
 @dataclass(slots=True, frozen=True)
