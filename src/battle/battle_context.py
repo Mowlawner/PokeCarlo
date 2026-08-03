@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from battle.battle_state import BattleState
+from battle.rng import RNG
 from move import MoveTarget
 from pokemon import Pokemon
 
@@ -8,6 +9,7 @@ from pokemon import Pokemon
 @dataclass
 class BattleContext:
     state: BattleState
+    rng: RNG
 
     def get_targets(
         self,

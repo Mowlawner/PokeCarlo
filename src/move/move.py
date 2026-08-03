@@ -9,6 +9,7 @@ from move_effects.move_effect import MoveEffect
 from pokemon_types import Type
 
 if TYPE_CHECKING:
+    from battle.battle_context import BattleContext
     from pokemon import Pokemon
 
 
@@ -49,10 +50,12 @@ class Move:
         self,
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
+        battle_context: "BattleContext",
     ) -> None:
         for effect in self.effects:
             effect.apply(
                 user=user,
                 targets=targets,
                 move_context=MoveContext(move_type=self.move_type),
+                battle_context=battle_context,
             )

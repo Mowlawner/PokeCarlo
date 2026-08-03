@@ -3,6 +3,7 @@ import pytest
 from battle import BattleState
 from battle.battle_context import BattleContext
 from battle.battle_resolver import BattleResolver
+from battle.rng import RNG
 from move import Move, MoveCategory, MoveTarget
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
@@ -193,7 +194,7 @@ def battle_state(
 
 @pytest.fixture
 def battle_context(battle_state: BattleState) -> BattleContext:
-    return BattleContext(battle_state)
+    return BattleContext(battle_state, rng=RNG(42))
 
 
 @pytest.fixture

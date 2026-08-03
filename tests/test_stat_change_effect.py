@@ -1,11 +1,14 @@
 import pytest
 
+from move.move_context import MoveContext
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon import Pokemon
 from stats.stat import Stat
 
 
-def test_stat_change_effect_applies_to_target(jolly_garchomp_set):
+def test_stat_change_effect_applies_to_target(
+    jolly_garchomp_set, swords_dance, battle_context
+):
     pokemon = Pokemon.from_set(jolly_garchomp_set)
 
     effect = StatChangeEffect(
@@ -13,17 +16,25 @@ def test_stat_change_effect_applies_to_target(jolly_garchomp_set):
         stages=2,
     )
 
+    move_context = MoveContext(swords_dance.move_type)
+
     effect.apply(
         user=pokemon,
         targets=(pokemon,),
+        move_context=move_context,
+        battle_context=battle_context,
     )
 
     assert pokemon.stat_stages.attack == 2
 
 
-def test_stat_change_effect_applies_to_multiple_targets(jolly_garchomp_set):
+def test_stat_change_effect_applies_to_multiple_targets(
+    jolly_garchomp_set, swords_dance, battle_context
+):
     first = Pokemon.from_set(jolly_garchomp_set)
     second = Pokemon.from_set(jolly_garchomp_set)
+
+    move_context = MoveContext(swords_dance.move_type)
 
     effect = StatChangeEffect(
         stat=Stat.DEFENSE,
@@ -33,6 +44,8 @@ def test_stat_change_effect_applies_to_multiple_targets(jolly_garchomp_set):
     effect.apply(
         user=first,
         targets=(first, second),
+        move_context=move_context,
+        battle_context=battle_context,
     )
 
     assert first.stat_stages.defense == -1

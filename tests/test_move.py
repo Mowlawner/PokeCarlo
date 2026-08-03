@@ -205,12 +205,14 @@ def test_move_apply_executes_damage_effect(
     garchomp,
     opponent_garchomp,
     earthquake,
+    battle_context,
 ):
     starting_hp = opponent_garchomp.current_hp
 
     earthquake.apply(
         user=garchomp,
         targets=(opponent_garchomp,),
+        battle_context=battle_context,
     )
 
     assert opponent_garchomp.current_hp < starting_hp

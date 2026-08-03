@@ -3,3 +3,12 @@ __pycache__/
 
 # IDE
 .idea/
+
+# Virtual environments
+.venv/
+venv/
+pfind/
+
+# Packaging
+dist/
+*.egg-info/

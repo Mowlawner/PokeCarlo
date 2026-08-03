@@ -65,6 +65,7 @@ def test_both_stats_can_be_overridden():
 def test_damage_effect_reduces_hp(
     garchomp,
     earthquake,
+    battle_context,
 ):
     effects = earthquake.effects
 
@@ -75,6 +76,7 @@ def test_damage_effect_reduces_hp(
             user=garchomp,
             targets=(garchomp,),
             move_context=MoveContext(earthquake.move_type),
+            battle_context=battle_context,
         )
 
     assert garchomp.current_hp < starting_hp

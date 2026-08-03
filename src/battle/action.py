@@ -30,7 +30,9 @@ class Action:
                     move_targets = context.get_targets(
                         self.pokemon, self.move.targeting, self.target
                     )
-                    self.move.apply(user=self.pokemon, targets=move_targets)
+                    self.move.apply(
+                        user=self.pokemon, targets=move_targets, battle_context=context
+                    )
                 else:
                     raise ValueError("A move action must have a move, none was given.")
             case ActionType.SWITCH:

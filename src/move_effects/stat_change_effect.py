@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from battle.battle_context import BattleContext
+from move.move_context import MoveContext
 from stats.stat import Stat
 from stats.stat_utils import modify_stage
 
@@ -26,6 +28,8 @@ class StatChangeEffect:
         self,
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
+        move_context: MoveContext,
+        battle_context: BattleContext,
     ) -> None:
         for target in targets:
             modify_stage(

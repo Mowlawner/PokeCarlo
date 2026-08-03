@@ -1,5 +1,5 @@
+from battle.rng import RNG
 from battle_ai.ai import AI
-from rng import RNG
 
 
 class RandomAI(AI):

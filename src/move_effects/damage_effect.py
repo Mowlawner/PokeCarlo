@@ -8,6 +8,7 @@ from pokemon_types.type_chart import effectiveness
 from stats.stat import Stat
 
 if TYPE_CHECKING:
+    from battle.battle_context import BattleContext
     from pokemon import Pokemon
 
 
@@ -26,6 +27,7 @@ class DamageEffect:
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
         move_context: MoveContext,
+        battle_context: "BattleContext",
     ) -> None:
         stab = 1.5 if move_context.move_type in user.pokemon_set.species.types else 1.0
         for target in targets:
@@ -39,6 +41,7 @@ class DamageEffect:
                 defense=target.stats.get(self.defending_stat),
                 stab=stab,
                 effectiveness=type_effectiveness,
+                random=battle_context.rng.damage_roll(),
             )
 
             target.take_damage(damage)
