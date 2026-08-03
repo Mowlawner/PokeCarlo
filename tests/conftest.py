@@ -55,6 +55,17 @@ def swords_dance() -> Move:
 
 
 @pytest.fixture
+def high_horsepower() -> Move:
+    return Move(
+        name="High Horsepower",
+        power=95,
+        accuracy=95,
+        move_type="Ground",
+        category="Physical",
+    )
+
+
+@pytest.fixture
 def garchomp_species() -> PokemonSpecies:
     return PokemonSpecies(
         name="Garchomp",

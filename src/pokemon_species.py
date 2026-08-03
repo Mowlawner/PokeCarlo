@@ -11,6 +11,13 @@ class PokemonSpecies:
 
     base_stats: BaseStats
 
+    def __post_init__(self):
+        if len(set(self.types)) != len(self.types):
+            raise ValueError("Pokemon cannot have duplicate types.")
+
+        if len(self.types) not in (1, 2):
+            raise ValueError("Pokemon must have one or two types.")
+
     @classmethod
     def from_json(cls, json_data: dict, name: str):
         return PokemonSpecies(

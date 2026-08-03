@@ -1,4 +1,4 @@
-from dataclasses import replace
+from dataclasses import FrozenInstanceError, replace
 
 import pytest
 
@@ -7,7 +7,9 @@ from stats.stat_stages import StatStages
 
 
 def test_one_move_is_allowed(garchomp_set):
-    replace(garchomp_set, moves=garchomp_set.moves)
+    new_set = replace(garchomp_set, moves=garchomp_set.moves)
+
+    assert len(new_set.moves) == 1
 
 
 def test_four_moves_are_allowed(
@@ -17,15 +19,16 @@ def test_four_moves_are_allowed(
     dragon_claw,
     swords_dance,
 ):
-    replace(
-        garchomp_set,
-        moves=(
-            tackle,
-            earthquake,
-            dragon_claw,
-            swords_dance,
-        ),
+    moves = (
+        tackle,
+        earthquake,
+        dragon_claw,
+        swords_dance,
     )
+
+    new_set = replace(garchomp_set, moves=moves)
+
+    assert len(new_set.moves) == 4
 
 
 def test_zero_moves_raises(garchomp_set):
@@ -36,16 +39,18 @@ def test_zero_moves_raises(garchomp_set):
         )
 
 
-def test_five_moves_raises(garchomp_set, tackle):
+def test_five_moves_raises(
+    garchomp_set, tackle, earthquake, dragon_claw, swords_dance, high_horsepower
+):
     with pytest.raises(ValueError):
         replace(
             garchomp_set,
             moves=(
                 tackle,
-                tackle,
-                tackle,
-                tackle,
-                tackle,
+                earthquake,
+                dragon_claw,
+                swords_dance,
+                high_horsepower,
             ),
         )
 
@@ -79,3 +84,23 @@ def test_duplicate_moves_raise(
                 tackle,
             ),
         )
+
+
+def test_pokemon_set_is_immutable(garchomp_set):
+    with pytest.raises(FrozenInstanceError):
+        garchomp_set.level = 100
+
+
+def test_pokemon_from_set_calculates_stats(garchomp_set):
+    pokemon = Pokemon.from_set(garchomp_set)
+
+    assert pokemon.stats.speed == 169
+    assert pokemon.stats.attack == 182
+
+
+def test_negative_hp_is_fainted(garchomp_set):
+    pokemon = Pokemon.from_set(garchomp_set)
+
+    pokemon.current_hp = -10
+
+    assert pokemon.is_fainted

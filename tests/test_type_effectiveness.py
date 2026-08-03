@@ -12,6 +12,13 @@ def test_immune():
 
 def test_extremely_effective():
     assert effectiveness(Type.ICE, (Type.DRAGON, Type.FLYING)) == 4.0
+    assert (
+        effectiveness(
+            Type.GROUND,
+            (Type.FIRE, Type.ROCK),
+        )
+        == 4.0
+    )
 
 
 def test_neutral_effectiveness():
@@ -26,11 +33,25 @@ def test_not_very_effective():
     assert effectiveness(Type.WATER, (Type.DRAGON,)) == 0.5
 
 
-def test_immunity_overrides_super_effective():
+def test_immunity_overrides_weakness():
     assert (
         effectiveness(
             Type.NORMAL,
             (Type.GHOST, Type.ROCK),
+        )
+        == 0.0
+    )
+
+
+def test_same_type_is_neutral_without_stab():
+    assert effectiveness(Type.FIRE, (Type.FIRE,)) == 0.5
+
+
+def test_immunity_overrides_super_effective():
+    assert (
+        effectiveness(
+            Type.GROUND,
+            (Type.ELECTRIC, Type.FLYING),
         )
         == 0.0
     )

@@ -2,7 +2,13 @@ from stats.base_stats import BaseStats
 from stats.evs import EVs
 from stats.ivs import IVs
 from stats.nature import Nature
-from stats.stat_calculator import calculate_hp, calculate_non_hp_stat, calculate_stats
+from stats.stat import Stat
+from stats.stat_calculator import (
+    calculate_hp,
+    calculate_non_hp_stat,
+    calculate_stats,
+    get_nature_modifier,
+)
 
 
 def test_hp_calculation():
@@ -136,4 +142,24 @@ def test_non_hp_stat_simple_case():
             nature_modifier=1.0,
         )
         == 55
+    )
+
+
+def test_jolly_boosts_speed():
+    assert (
+        get_nature_modifier(
+            Nature.JOLLY,
+            Stat.SPEED,
+        )
+        == 1.1
+    )
+
+
+def test_jolly_hinders_special_attack():
+    assert (
+        get_nature_modifier(
+            Nature.JOLLY,
+            Stat.SP_ATTACK,
+        )
+        == 0.9
     )

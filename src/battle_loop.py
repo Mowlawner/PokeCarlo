@@ -1,5 +1,5 @@
+from battle import Action, BattleState
 from battle_ai.ai import AI
-from battle_state import BattleState
 
 
 def determine_order() -> list: ...
@@ -42,3 +42,29 @@ while both_alive:
 
     turn += 1
 """
+
+
+def execute_move():
+    pass
+
+
+def check_faints():
+    pass
+
+
+def increment_turn():
+    pass
+
+
+def execute_turn(
+    state: BattleState,
+    player_action: Action,
+    opponent_action: Action,
+):
+    determine_order()
+
+    execute_move()
+
+    check_faints()
+
+    increment_turn()
