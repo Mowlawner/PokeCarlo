@@ -15,6 +15,6 @@ class PokemonSpecies:
     def from_json(cls, json_data: dict, name: str):
         return PokemonSpecies(
             name=name,
-            types=tuple(json_data["types"]),
+            types=tuple(json_data["pokemon_types"]),
             base_stats=BaseStats.from_json(json_data["base_stats"]),
         )
