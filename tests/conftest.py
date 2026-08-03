@@ -3,6 +3,7 @@ import pytest
 from move import Move
 from pokemon_set import PokemonSet
 from pokemon_species import PokemonSpecies
+from pokemon_types import Type
 from stats.base_stats import BaseStats
 from stats.evs import EVs
 from stats.ivs import IVs
@@ -15,7 +16,7 @@ def tackle() -> Move:
         name="Tackle",
         power=40,
         accuracy=100,
-        move_type="Normal",
+        move_type=Type.NORMAL,
         category="Physical",
     )
 
@@ -26,7 +27,7 @@ def earthquake() -> Move:
         name="Earthquake",
         power=100,
         accuracy=100,
-        move_type="Ground",
+        move_type=Type.GROUND,
         category="Physical",
     )
 
@@ -37,7 +38,7 @@ def dragon_claw() -> Move:
         name="Dragon Claw",
         power=80,
         accuracy=100,
-        move_type="Dragon",
+        move_type=Type.DRAGON,
         category="Physical",
     )
 
@@ -48,7 +49,7 @@ def swords_dance() -> Move:
         name="Swords Dance",
         power=0,
         accuracy=0,  # or however you decide to represent "never misses"
-        move_type="Normal",
+        move_type=Type.NORMAL,
         category="Status",
     )
 

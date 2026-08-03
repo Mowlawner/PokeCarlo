@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from pokemon_types import Type
 
 @dataclass(slots=True, frozen=True)
 class Move:
@@ -9,7 +9,7 @@ class Move:
 
     accuracy: int
 
-    move_type: str
+    move_type: Type
 
     category: str
 
