@@ -1,8 +1,11 @@
 import pytest
 
+from battle import BattleState
+from battle.battle_context import BattleContext
 from move import Move, MoveCategory
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
+from pokemon import Pokemon
 from pokemon_set import PokemonSet
 from pokemon_species import PokemonSpecies
 from pokemon_types import Type
@@ -121,3 +124,49 @@ def garchomp_set(
         ),
         moves=(tackle,),
     )
+
+
+@pytest.fixture
+def garchomp(
+    garchomp_set: PokemonSet,
+) -> Pokemon:
+    return Pokemon.from_set(garchomp_set)
+
+
+@pytest.fixture
+def battle_state(
+    garchomp,
+    ally_garchomp,
+    opponent_garchomp,
+    second_opponent_garchomp,
+) -> BattleState:
+    return BattleState(
+        player_active=(
+            garchomp,
+            ally_garchomp,
+        ),
+        opponent_active=(
+            opponent_garchomp,
+            second_opponent_garchomp,
+        ),
+    )
+
+
+@pytest.fixture
+def battle_context(battle_state: BattleState) -> BattleContext:
+    return BattleContext(battle_state)
+
+
+@pytest.fixture
+def opponent_garchomp(garchomp_species, garchomp_set) -> Pokemon:
+    return Pokemon.from_set(garchomp_set)
+
+
+@pytest.fixture
+def ally_garchomp(garchomp_species, garchomp_set) -> Pokemon:
+    return Pokemon.from_set(garchomp_set)
+
+
+@pytest.fixture
+def second_opponent_garchomp(garchomp_set) -> Pokemon:
+    return Pokemon.from_set(garchomp_set)

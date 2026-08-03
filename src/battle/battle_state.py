@@ -7,8 +7,8 @@ from weather import Weather
 
 @dataclass(slots=True)
 class BattleState:
-    player_active: Pokemon
-    opponent_active: Pokemon
+    player_active: tuple[Pokemon, ...]
+    opponent_active: tuple[Pokemon, ...]
 
     turn_number: int = 1
 

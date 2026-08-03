@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from move import Move
 from pokemon import Pokemon
 
 
@@ -13,3 +14,4 @@ class ActionType(Enum):
 class Action:
     pokemon: Pokemon
     action: ActionType
+    move: Move | None = None
