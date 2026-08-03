@@ -1,6 +1,6 @@
 import pytest
 
-from move import Move
+from move import Move, MoveCategory
 from pokemon_set import PokemonSet
 from pokemon_species import PokemonSpecies
 from pokemon_types import Type
@@ -17,7 +17,7 @@ def tackle() -> Move:
         power=40,
         accuracy=100,
         move_type=Type.NORMAL,
-        category="Physical",
+        category=MoveCategory.PHYSICAL,
     )
 
 
@@ -28,7 +28,7 @@ def earthquake() -> Move:
         power=100,
         accuracy=100,
         move_type=Type.GROUND,
-        category="Physical",
+        category=MoveCategory.PHYSICAL,
     )
 
 
@@ -39,7 +39,7 @@ def dragon_claw() -> Move:
         power=80,
         accuracy=100,
         move_type=Type.DRAGON,
-        category="Physical",
+        category=MoveCategory.PHYSICAL,
     )
 
 
@@ -48,9 +48,9 @@ def swords_dance() -> Move:
     return Move(
         name="Swords Dance",
         power=0,
-        accuracy=0,  # or however you decide to represent "never misses"
+        accuracy=None,  # or however you decide to represent "never misses"
         move_type=Type.NORMAL,
-        category="Status",
+        category=MoveCategory.STATUS,
     )
 
 
@@ -60,8 +60,8 @@ def high_horsepower() -> Move:
         name="High Horsepower",
         power=95,
         accuracy=95,
-        move_type="Ground",
-        category="Physical",
+        move_type=Type.GROUND,
+        category=MoveCategory.PHYSICAL,
     )
 
 
@@ -69,7 +69,7 @@ def high_horsepower() -> Move:
 def garchomp_species() -> PokemonSpecies:
     return PokemonSpecies(
         name="Garchomp",
-        types=("Dragon", "Ground"),
+        types=(Type.DRAGON, Type.GROUND),
         base_stats=BaseStats(
             hp=108,
             attack=130,

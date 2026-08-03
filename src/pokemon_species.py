@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from pokemon_types import Type
 from stats.base_stats import BaseStats
 
 
@@ -7,7 +8,7 @@ from stats.base_stats import BaseStats
 class PokemonSpecies:
     name: str
 
-    types: tuple[str, ...]
+    types: tuple[Type, ...]
 
     base_stats: BaseStats
 
@@ -22,6 +23,6 @@ class PokemonSpecies:
     def from_json(cls, json_data: dict, name: str):
         return PokemonSpecies(
             name=name,
-            types=tuple(json_data["pokemon_types"]),
+            types=tuple(Type(t) for t in json_data["pokemon_types"]),
             base_stats=BaseStats.from_json(json_data["base_stats"]),
         )
