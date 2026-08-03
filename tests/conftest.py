@@ -20,11 +20,10 @@ from stats.stat import Stat
 def tackle() -> Move:
     return Move(
         name="Tackle",
-        power=40,
         accuracy=100,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect(),),
+        effects=(DamageEffect(power=40),),
     )
 
 
@@ -32,11 +31,10 @@ def tackle() -> Move:
 def earthquake() -> Move:
     return Move(
         name="Earthquake",
-        power=100,
         accuracy=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect(),),
+        effects=(DamageEffect(power=100),),
     )
 
 
@@ -44,11 +42,10 @@ def earthquake() -> Move:
 def dragon_claw() -> Move:
     return Move(
         name="Dragon Claw",
-        power=80,
         accuracy=100,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect(),),
+        effects=(DamageEffect(power=80),),
     )
 
 
@@ -56,7 +53,6 @@ def dragon_claw() -> Move:
 def swords_dance() -> Move:
     return Move(
         name="Swords Dance",
-        power=0,
         accuracy=None,  # or however you decide to represent "never misses"
         move_type=Type.NORMAL,
         category=MoveCategory.STATUS,
@@ -73,11 +69,10 @@ def swords_dance() -> Move:
 def high_horsepower() -> Move:
     return Move(
         name="High Horsepower",
-        power=95,
         accuracy=95,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
-        effects=(DamageEffect(),),
+        effects=(DamageEffect(power=95),),
     )
 
 

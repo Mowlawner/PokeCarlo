@@ -1,6 +1,7 @@
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
+from damage_calculator import calculate_damage
 from move.move_category import MoveCategory
 from stats.stat import Stat
 
@@ -10,25 +11,28 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True, slots=True)
 class DamageEffect:
+    power: int
     attacking_stat: Stat | None = None
     defending_stat: Stat | None = None
+
+    def __post_init__(self):
+        if self.power < 0:
+            raise ValueError("Move power cannot be negative.")
 
     def apply(
         self,
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
     ) -> None:
-        # TODO:
-        # for target in targets:
-        #     damage = calculate_damage(
-        #         user=user,
-        #         target=target,
-        #         attacking_stat=self.attacking_stat,
-        #         defending_stat=self.defending_stat,
-        #     )
-        #
-        #     target.current_hp -= damage
-        pass
+        for target in targets:
+            damage = calculate_damage(
+                level=user.pokemon_set.level,
+                power=self.power,
+                attack=getattr(user.stats, self.attacking_stat.name.lower()),
+                defense=getattr(target.stats, self.defending_stat.name.lower()),
+            )
+
+            target.take_damage(damage)
 
 
 def resolve_defaults(

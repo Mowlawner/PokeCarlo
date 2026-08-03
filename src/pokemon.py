@@ -42,3 +42,6 @@ class Pokemon:
     @property
     def is_fainted(self) -> bool:
         return self.current_hp <= 0
+
+    def take_damage(self, amount: int) -> None:
+        self.current_hp = max(0, self.current_hp - amount)
