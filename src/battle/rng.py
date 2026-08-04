@@ -10,3 +10,9 @@ class RNG:
 
     def damage_roll(self) -> float:
         return self._random.uniform(0.85, 1.0)
+
+    def accuracy_roll(self) -> float:
+        return self.roll()
+
+    def critical_roll(self) -> float:
+        return self.roll()

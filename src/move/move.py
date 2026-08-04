@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from battle.rng import RNG
 from move.move_category import MoveCategory
 from move.move_context import MoveContext
 from move.targeting import MoveTarget
@@ -46,16 +47,22 @@ class Move:
         ):
             raise ValueError("Status moves cannot have DamageEffects.")
 
+    def hits(self, rng: RNG) -> bool:
+        return rng.accuracy_roll() < self.accuracy / 100
+
     def apply(
         self,
         user: "Pokemon",
         targets: tuple["Pokemon", ...],
         battle_context: "BattleContext",
     ) -> None:
+        successful_targets = tuple(
+            target for target in targets if self.hits(rng=battle_context.rng)
+        )
         for effect in self.effects:
             effect.apply(
                 user=user,
-                targets=targets,
-                move_context=MoveContext(move_type=self.move_type),
+                targets=successful_targets,
+                move_context=MoveContext(self.move_type),
                 battle_context=battle_context,
             )

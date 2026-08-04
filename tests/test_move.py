@@ -2,6 +2,8 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
+from battle.battle_context import BattleContext
+from battle.stub_rng import StubRNG
 from move import Move, MoveCategory, MoveTarget
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
@@ -216,3 +218,121 @@ def test_move_apply_executes_damage_effect(
     )
 
     assert opponent_garchomp.current_hp < starting_hp
+
+
+def test_move_applies_effect_when_accuracy_check_succeeds(
+    garchomp,
+    opponent_garchomp,
+    earthquake,
+    battle_state,
+):
+    rng = StubRNG(accuracy_rolls=[0.0])
+
+    starting_hp = opponent_garchomp.current_hp
+
+    earthquake.apply(
+        user=garchomp,
+        targets=(opponent_garchomp,),
+        battle_context=BattleContext(battle_state, rng),
+    )
+
+    assert opponent_garchomp.current_hp < starting_hp
+
+
+def test_move_does_not_apply_effect_when_accuracy_check_fails(
+    garchomp,
+    opponent_garchomp,
+    high_horsepower,
+    battle_state,
+):
+    rng = StubRNG(accuracy_rolls=[0.99])
+
+    starting_hp = opponent_garchomp.current_hp
+
+    high_horsepower.apply(
+        user=garchomp,
+        targets=(opponent_garchomp,),
+        battle_context=BattleContext(battle_state, rng),
+    )
+
+    assert opponent_garchomp.current_hp == starting_hp
+
+
+def test_perfect_accuracy_move_hits_on_max_roll(
+    garchomp,
+    opponent_garchomp,
+    earthquake,
+    battle_state,
+):
+    rng = StubRNG(accuracy_rolls=[0.99])
+
+    starting_hp = opponent_garchomp.current_hp
+
+    earthquake.apply(
+        user=garchomp,
+        targets=(opponent_garchomp,),
+        battle_context=BattleContext(battle_state, rng),
+    )
+
+    assert opponent_garchomp.current_hp < starting_hp
+
+
+def test_move_checks_accuracy_independently_for_each_target(
+    garchomp,
+    opponent_garchomp,
+    second_opponent_garchomp,
+    rock_slide,
+    battle_state,
+):
+    rng = StubRNG(
+        accuracy_rolls=[
+            0.0,  # first target hits
+            0.99,  # second target misses
+        ]
+    )
+
+    first_starting_hp = opponent_garchomp.current_hp
+    second_starting_hp = second_opponent_garchomp.current_hp
+
+    rock_slide.apply(
+        user=garchomp,
+        targets=(
+            opponent_garchomp,
+            second_opponent_garchomp,
+        ),
+        battle_context=BattleContext(
+            battle_state,
+            rng,
+        ),
+    )
+
+    assert opponent_garchomp.current_hp < first_starting_hp
+    assert second_opponent_garchomp.current_hp == second_starting_hp
+
+
+def test_damage_roll_is_generated_for_each_target(
+    garchomp,
+    opponent_garchomp,
+    second_opponent_garchomp,
+    rock_slide,
+    battle_state,
+):
+    rng = StubRNG(
+        accuracy_rolls=[0.0, 0.0],
+        damage_rolls=[0.85, 0.99],
+        critical_rolls=[0.99, 0.99],
+    )
+
+    starting_hp_1 = opponent_garchomp.current_hp
+    starting_hp_2 = second_opponent_garchomp.current_hp
+
+    rock_slide.apply(
+        user=garchomp,
+        targets=(opponent_garchomp, second_opponent_garchomp),
+        battle_context=BattleContext(battle_state, rng),
+    )
+
+    assert opponent_garchomp.current_hp < starting_hp_1
+    assert second_opponent_garchomp.current_hp < starting_hp_2
+
+    assert rng._damage_rolls == []

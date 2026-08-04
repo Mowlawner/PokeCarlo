@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from pokemon import Pokemon
 
 
+CRIT_CHANCE = 1 / 24
+
+
 @dataclass(frozen=True, slots=True)
 class DamageEffect:
     power: int
@@ -34,6 +37,7 @@ class DamageEffect:
             type_effectiveness = effectiveness(
                 move_context.move_type, target.pokemon_set.species.types
             )
+            is_critical = battle_context.rng.critical_roll() < CRIT_CHANCE
             damage = calculate_damage(
                 level=user.pokemon_set.level,
                 power=self.power,
@@ -42,6 +46,7 @@ class DamageEffect:
                 stab=stab,
                 effectiveness=type_effectiveness,
                 random=battle_context.rng.damage_roll(),
+                critical=is_critical,
             )
 
             target.take_damage(damage)

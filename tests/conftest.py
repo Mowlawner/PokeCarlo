@@ -53,6 +53,18 @@ def dragon_claw() -> Move:
 
 
 @pytest.fixture
+def rock_slide() -> Move:
+    return Move(
+        name="Rock Slide",
+        accuracy=90,
+        move_type=Type.ROCK,
+        category=MoveCategory.PHYSICAL,
+        effects=(DamageEffect(power=75),),
+        targeting=MoveTarget.ALL_OPPONENTS,
+    )
+
+
+@pytest.fixture
 def swords_dance() -> Move:
     return Move(
         name="Swords Dance",
