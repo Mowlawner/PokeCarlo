@@ -75,7 +75,7 @@ def test_damage_effect_reduces_hp(
         effect.apply(
             user=garchomp,
             targets=(garchomp,),
-            move_context=MoveContext(earthquake.move_type),
+            move_context=MoveContext(earthquake.move_type, earthquake.category),
             battle_context=battle_context,
         )
 

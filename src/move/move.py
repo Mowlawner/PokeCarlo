@@ -63,6 +63,6 @@ class Move:
             effect.apply(
                 user=user,
                 targets=successful_targets,
-                move_context=MoveContext(self.move_type),
+                move_context=MoveContext(self.move_type, self.category),
                 battle_context=battle_context,
             )

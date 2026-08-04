@@ -16,7 +16,9 @@ def test_stat_change_effect_applies_to_target(
         stages=2,
     )
 
-    move_context = MoveContext(swords_dance.move_type)
+    move_context = MoveContext(
+        swords_dance.move_type, move_category=swords_dance.category
+    )
 
     effect.apply(
         user=pokemon,
@@ -34,7 +36,7 @@ def test_stat_change_effect_applies_to_multiple_targets(
     first = Pokemon.from_set(jolly_garchomp_set)
     second = Pokemon.from_set(jolly_garchomp_set)
 
-    move_context = MoveContext(swords_dance.move_type)
+    move_context = MoveContext(swords_dance.move_type, swords_dance.category)
 
     effect = StatChangeEffect(
         stat=Stat.DEFENSE,

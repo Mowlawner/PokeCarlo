@@ -28,13 +28,14 @@ def get_effective_stat(
     Returns the Pokémon's effective value for the requested stat in the
     current battle state.
 
-    This applies all modifiers that affect the stat at the moment it is
-    queried, including (as implemented):
-
+    This applies all implemented modifiers that affect the stat at the moment
+    it is queried. Currently implemented:
     - Stat stage modifiers
-    - Status effects (e.g. burn)
-    - Ability modifiers
-    - Item modifiers
+    - Burn's physical offensive modifier
+
+    Future modifiers:
+    - Abilities
+    - Items
     - Field and battle effects
 
     The requested role determines whether offensive or defensive modifiers
@@ -53,9 +54,8 @@ def get_effective_stat(
 
     if (
         role is StatRole.OFFENSE
-        and stat is Stat.ATTACK
         and move_context is not None
-        and move_context.move_type is MoveCategory.PHYSICAL
+        and move_context.move_category is MoveCategory.PHYSICAL
         and pokemon.status is StatusCondition.BURN
     ):
         value //= 2
