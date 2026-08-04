@@ -2,9 +2,11 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 from battle.battle_context import BattleContext
+from move import MoveCategory
 from move.move_context import MoveContext
 from stats.stat import Stat
 from stats.stat_utils import get_stage, stage_multiplier
+from status_condition import StatusCondition
 
 if TYPE_CHECKING:
     from pokemon import Pokemon
@@ -48,5 +50,14 @@ def get_effective_stat(
     # Apply stat stage modifier.
     stage = get_stage(pokemon.stat_stages, stat)
     value = int(value * stage_multiplier(stat, stage))
+
+    if (
+        role is StatRole.OFFENSE
+        and stat is Stat.ATTACK
+        and move_context is not None
+        and move_context.move_type is MoveCategory.PHYSICAL
+        and pokemon.status is StatusCondition.BURN
+    ):
+        value //= 2
 
     return value
