@@ -4,6 +4,7 @@ from pokemon_set import PokemonSet
 from stats.stat_calculator import calculate_stats
 from stats.stat_stages import StatStages
 from stats.stats import Stats
+from status_condition import StatusCondition
 
 
 @dataclass(slots=True)
@@ -15,8 +16,9 @@ class Pokemon:
 
     stat_stages: StatStages
 
+    status: StatusCondition = StatusCondition.NONE
+
     # later
-    # status: StatusCondition | None
     # volatile_effects: ...
 
     @classmethod
