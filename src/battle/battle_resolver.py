@@ -1,5 +1,6 @@
 from battle.action import Action
 from battle.battle_context import BattleContext
+from pokemon import Pokemon
 
 
 class BattleResolver:
@@ -26,4 +27,20 @@ class BattleResolver:
             key=lambda action: (
                 (action.move.priority, action.pokemon.stats.speed) if action.move else 0
             ),
+        )
+
+    def switch(
+        self,
+        *,
+        outgoing: Pokemon,
+        incoming: Pokemon,
+    ) -> None:
+        self.context.state.replace_active(
+            outgoing=outgoing,
+            incoming=incoming,
+        )
+
+        incoming.pokemon_set.ability.on_switch_in(
+            pokemon=incoming,
+            battle_context=self.context,
         )
