@@ -1,6 +1,8 @@
 import pytest
 
 from abilities.ability import Ability
+from abilities.intimidate import Intimidate
+from abilities.not_implemented_abilities import MOXIE, ROUGH_SKIN, SAND_VEIL
 from battle import BattleState
 from battle.battle_context import BattleContext
 from battle.battle_resolver import BattleResolver
@@ -22,12 +24,22 @@ from stats.stat import Stat
 
 @pytest.fixture
 def rough_skin():
-    return Ability("Rough Skin")
+    return ROUGH_SKIN
 
 
 @pytest.fixture
 def sand_veil():
-    return Ability("Sand Veil")
+    return SAND_VEIL
+
+
+@pytest.fixture
+def moxie():
+    return MOXIE
+
+
+@pytest.fixture
+def intimidate():
+    return Intimidate()
 
 
 @pytest.fixture
@@ -121,6 +133,23 @@ def garchomp_species(rough_skin, sand_veil) -> PokemonSpecies:
 
 
 @pytest.fixture
+def gyarados_species(intimidate, moxie) -> PokemonSpecies:
+    return PokemonSpecies(
+        name="Gyarados",
+        types=(Type.WATER, Type.FLYING),
+        base_stats=BaseStats(
+            hp=95,
+            attack=125,
+            defense=79,
+            sp_attack=60,
+            sp_defense=100,
+            speed=81,
+        ),
+        abilities=(intimidate, moxie),
+    )
+
+
+@pytest.fixture
 def protect():
     return Move(
         name="Protect",
@@ -150,7 +179,7 @@ def jolly_garchomp_set(
             speed=31,
         ),
         evs=EVs(
-            hp=4,
+            hp=6,
             attack=252,
             defense=0,
             sp_attack=0,
@@ -159,6 +188,35 @@ def jolly_garchomp_set(
         ),
         moves=(tackle,),
         ability=rough_skin,
+    )
+
+
+@pytest.fixture
+def jolly_gyarados_set(
+    gyarados_species: PokemonSpecies, tackle: Move, intimidate: Ability
+) -> PokemonSet:
+    return PokemonSet(
+        species=gyarados_species,
+        level=50,
+        nature=Nature.JOLLY,
+        ivs=IVs(
+            hp=31,
+            attack=31,
+            defense=31,
+            sp_attack=31,
+            sp_defense=31,
+            speed=31,
+        ),
+        evs=EVs(
+            hp=4,
+            attack=252,
+            defense=2,
+            sp_attack=0,
+            sp_defense=0,
+            speed=252,
+        ),
+        moves=(tackle,),
+        ability=intimidate,
     )
 
 
@@ -196,6 +254,13 @@ def garchomp(
     jolly_garchomp_set: PokemonSet,
 ) -> Pokemon:
     return Pokemon.from_set(jolly_garchomp_set)
+
+
+@pytest.fixture
+def gyarados(
+    jolly_gyarados_set: PokemonSet,
+) -> Pokemon:
+    return Pokemon.from_set(jolly_gyarados_set)
 
 
 @pytest.fixture

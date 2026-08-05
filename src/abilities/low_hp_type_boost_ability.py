@@ -30,17 +30,29 @@ class LowHPTypeBoostAbility(Ability):
         return damage
 
 
-TORRENT = LowHPTypeBoostAbility(
-    name="Torrent",
+@dataclass(frozen=True, slots=True)
+class Torrent(LowHPTypeBoostAbility):
+    name = "Torrent"
+
+
+TORRENT = Torrent(
     boost_type=Type.WATER,
 )
 
-OVERGROW = LowHPTypeBoostAbility(
-    name="Overgrow",
+
+@dataclass(frozen=True, slots=True)
+class Overgrow(LowHPTypeBoostAbility):
+    name = "Overgrow"
+
+
+OVERGROW = Overgrow(
     boost_type=Type.GRASS,
 )
 
-BLAZE = LowHPTypeBoostAbility(
-    name="Blaze",
-    boost_type=Type.FIRE,
-)
+
+@dataclass(frozen=True, slots=True)
+class Blaze(LowHPTypeBoostAbility):
+    name = "Blaze"
+
+
+BLAZE = Blaze(boost_type=Type.FIRE)

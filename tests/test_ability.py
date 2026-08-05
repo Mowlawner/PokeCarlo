@@ -6,8 +6,10 @@ from abilities.ability import Ability
 from abilities.low_hp_type_boost_ability import (
     BLAZE,
     TORRENT,
-    LowHPTypeBoostAbility,
 )
+from battle import BattleState
+from battle.battle_context import BattleContext
+from battle.stub_rng import StubRNG
 from pokemon_types import Type
 from stats.stat import Stat
 from stats.stat_engine import StatRole
@@ -23,17 +25,7 @@ def test_ability_is_immutable():
     ability = BLAZE
 
     with pytest.raises(FrozenInstanceError):
-        ability.name = "Torrent"
-
-
-def test_equal_abilities_compare_equal():
-    ability1 = BLAZE
-    ability2 = LowHPTypeBoostAbility(
-        name="Blaze",
-        boost_type=Type.FIRE,
-    )
-
-    assert ability1 == ability2
+        ability.boost_type = Type.WATER
 
 
 def test_different_abilities_compare_not_equal():
@@ -51,14 +43,9 @@ def test_abilities_are_hashable():
 
 
 def test_low_hp_type_boost_ability_boosts_matching_type_damage(
-    garchomp,
-    battle_context,
-    move_context_factory,
+    garchomp, battle_context, move_context_factory
 ):
-    ability = LowHPTypeBoostAbility(
-        name="Test",
-        boost_type=Type.FIRE,
-    )
+    ability = BLAZE
 
     garchomp.current_hp = garchomp.stats.hp // 3
 
@@ -78,10 +65,7 @@ def test_low_hp_type_boost_ability_does_not_boost_wrong_type_damage(
     battle_context,
     move_context_factory,
 ):
-    ability = LowHPTypeBoostAbility(
-        name="Test",
-        boost_type=Type.FIRE,
-    )
+    ability = BLAZE
 
     garchomp.current_hp = garchomp.stats.hp // 3
 
@@ -101,10 +85,7 @@ def test_low_hp_type_boost_ability_does_not_boost_above_threshold(
     battle_context,
     move_context_factory,
 ):
-    ability = LowHPTypeBoostAbility(
-        name="Test",
-        boost_type=Type.FIRE,
-    )
+    ability = BLAZE
 
     garchomp.current_hp = garchomp.stats.hp
 
@@ -125,7 +106,7 @@ def test_base_ability_does_not_modify_damage(
     battle_context,
     move_context_factory,
 ):
-    ability = Ability(name="Test")
+    ability = Ability()
 
     assert (
         ability.modify_outgoing_damage(
@@ -158,3 +139,18 @@ def test_base_ability_does_not_modify_damage(
         )
         == 100
     )
+
+
+def test_intimidate_lowers_opponents_attack_by_one_stage(garchomp, gyarados):
+    gyarados.pokemon_set.ability.on_switch_in(
+        pokemon=gyarados,
+        battle_context=BattleContext(
+            state=BattleState(
+                player_active=(gyarados,),
+                opponent_active=(garchomp,),
+                turn_number=1,
+            ),
+            rng=StubRNG(),
+        ),
+    )
+    assert garchomp.stat_stages.attack == -1

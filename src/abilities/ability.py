@@ -1,6 +1,5 @@
 from abc import ABC
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
     from battle.battle_context import BattleContext
@@ -10,9 +9,8 @@ if TYPE_CHECKING:
     from stats.stat_engine import StatRole
 
 
-@dataclass(frozen=True, slots=True)
 class Ability(ABC):
-    name: str
+    name: ClassVar[str]
 
     def on_switch_in(
         self,
