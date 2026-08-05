@@ -1,7 +1,7 @@
 import pytest
 
 from abilities.ability import Ability
-from abilities.intimidate import Intimidate
+from abilities.intimidate import INTIMIDATE
 from abilities.not_implemented_abilities import MOXIE, ROUGH_SKIN, SAND_VEIL
 from battle import BattleState
 from battle.battle_context import BattleContext
@@ -39,7 +39,7 @@ def moxie():
 
 @pytest.fixture
 def intimidate():
-    return Intimidate()
+    return INTIMIDATE
 
 
 @pytest.fixture
