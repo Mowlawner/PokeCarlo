@@ -32,9 +32,9 @@ def get_effective_stat(
     it is queried. Currently implemented:
     - Stat stage modifiers
     - Burn's physical offensive modifier
+    - Abilities
 
     Future modifiers:
-    - Abilities
     - Items
     - Field and battle effects
 
@@ -59,5 +59,14 @@ def get_effective_stat(
         and pokemon.status is StatusCondition.BURN
     ):
         value //= 2
+
+    value = pokemon.pokemon_set.ability.modify_effective_stat(
+        value=value,
+        pokemon=pokemon,
+        stat=stat,
+        role=role,
+        move_context=move_context,
+        battle_context=battle_context,
+    )
 
     return value

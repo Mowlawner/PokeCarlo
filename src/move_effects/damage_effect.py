@@ -33,11 +33,14 @@ class DamageEffect:
         battle_context: "BattleContext",
     ) -> None:
         stab = 1.5 if move_context.move_type in user.pokemon_set.species.types else 1.0
+
         for target in targets:
             type_effectiveness = effectiveness(
                 move_context.move_type, target.pokemon_set.species.types
             )
+
             is_critical = battle_context.rng.critical_roll() < CRIT_CHANCE
+
             damage = calculate_damage(
                 level=user.pokemon_set.level,
                 power=self.power,
@@ -47,6 +50,14 @@ class DamageEffect:
                 effectiveness=type_effectiveness,
                 random=battle_context.rng.damage_roll(),
                 critical=is_critical,
+            )
+
+            damage = user.pokemon_set.ability.modify_outgoing_damage(
+                damage=damage,
+                user=user,
+                target=target,
+                move_context=move_context,
+                battle_context=battle_context,
             )
 
             target.take_damage(damage)

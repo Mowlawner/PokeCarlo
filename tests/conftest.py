@@ -1,10 +1,12 @@
 import pytest
 
+from abilities.ability import Ability
 from battle import BattleState
 from battle.battle_context import BattleContext
 from battle.battle_resolver import BattleResolver
 from battle.rng import RNG
 from move import Move, MoveCategory, MoveTarget
+from move.move_context import MoveContext
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon import Pokemon
@@ -16,6 +18,16 @@ from stats.evs import EVs
 from stats.ivs import IVs
 from stats.nature import Nature
 from stats.stat import Stat
+
+
+@pytest.fixture
+def rough_skin():
+    return Ability("Rough Skin")
+
+
+@pytest.fixture
+def sand_veil():
+    return Ability("Sand Veil")
 
 
 @pytest.fixture
@@ -92,7 +104,7 @@ def high_horsepower() -> Move:
 
 
 @pytest.fixture
-def garchomp_species() -> PokemonSpecies:
+def garchomp_species(rough_skin, sand_veil) -> PokemonSpecies:
     return PokemonSpecies(
         name="Garchomp",
         types=(Type.DRAGON, Type.GROUND),
@@ -104,6 +116,7 @@ def garchomp_species() -> PokemonSpecies:
             sp_defense=85,
             speed=102,
         ),
+        abilities=(rough_skin, sand_veil),
     )
 
 
@@ -122,8 +135,7 @@ def protect():
 
 @pytest.fixture
 def jolly_garchomp_set(
-    garchomp_species: PokemonSpecies,
-    tackle: Move,
+    garchomp_species: PokemonSpecies, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
     return PokemonSet(
         species=garchomp_species,
@@ -146,13 +158,13 @@ def jolly_garchomp_set(
             speed=252,
         ),
         moves=(tackle,),
+        ability=rough_skin,
     )
 
 
 @pytest.fixture
 def adamant_garchomp_set(
-    garchomp_species: PokemonSpecies,
-    tackle: Move,
+    garchomp_species: PokemonSpecies, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
     return PokemonSet(
         species=garchomp_species,
@@ -175,6 +187,7 @@ def adamant_garchomp_set(
             speed=252,
         ),
         moves=(tackle,),
+        ability=rough_skin,
     )
 
 
@@ -232,3 +245,17 @@ def second_opponent_garchomp(jolly_garchomp_set) -> Pokemon:
 @pytest.fixture
 def battle_resolver(battle_context) -> BattleResolver:
     return BattleResolver(battle_context)
+
+
+@pytest.fixture
+def move_context_factory():
+    def factory(
+        move_type: Type,
+        move_category: MoveCategory = MoveCategory.SPECIAL,
+    ):
+        return MoveContext(
+            move_type=move_type,
+            move_category=move_category,
+        )
+
+    return factory
