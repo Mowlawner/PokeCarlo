@@ -21,3 +21,17 @@ class Moxie(Ability):
 
 
 MOXIE = Moxie()
+
+
+class SandStream(Ability):
+    name = "Sand Stream"
+
+
+SAND_STREAM = SandStream()
+
+
+class Unnerve(Ability):
+    name = "Unnerve"
+
+
+UNNERVE = Unnerve()

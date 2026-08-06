@@ -66,3 +66,21 @@ class BattleContext:
 
             case _:
                 raise ValueError(f"Invalid targeting {targeting}.")
+
+    def is_player_pokemon(
+        self,
+        pokemon: Pokemon,
+    ) -> bool:
+        return any(active is pokemon for active in self.state.player_active)
+
+    def get_bench(
+        self,
+        pokemon: Pokemon,
+    ) -> tuple[Pokemon, ...]:
+        if self.is_player_pokemon(pokemon):
+            return self.state.player_bench
+
+        if any(active is pokemon for active in self.state.opponent_active):
+            return self.state.opponent_bench
+
+        raise ValueError("Pokémon is not currently active.")
