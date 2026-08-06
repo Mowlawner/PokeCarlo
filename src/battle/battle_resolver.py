@@ -18,14 +18,15 @@ class BattleResolver:
 
             action.apply(self.context)
 
-    @staticmethod
     def get_next_action(
+        self,
         actions: list[Action],
     ) -> Action:
         return max(
             actions,
             key=lambda action: (
-                (action.move.priority, action.pokemon.stats.speed) if action.move else 0
+                action.priority,
+                action.speed_tiebreaker(),
             ),
         )
 

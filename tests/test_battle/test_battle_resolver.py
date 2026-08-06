@@ -1,5 +1,4 @@
-from battle import Action
-from battle.action import ActionType
+from battle.action import MoveAction
 
 
 def test_battle_resolver_applies_action(
@@ -8,11 +7,10 @@ def test_battle_resolver_applies_action(
     opponent_garchomp,
     earthquake,
 ):
-    action = Action(
-        action=ActionType.MOVE,
-        pokemon=garchomp,
+    action = MoveAction(
+        actor=garchomp,
         move=earthquake,
-        target=opponent_garchomp,
+        # target=opponent_garchomp,
     )
 
     starting_hp = opponent_garchomp.current_hp
@@ -30,18 +28,16 @@ def test_battle_resolver_applies_multiple_actions(
     opponent_garchomp,
     earthquake,
 ):
-    player_action = Action(
-        action=ActionType.MOVE,
-        pokemon=garchomp,
+    player_action = MoveAction(
+        actor=garchomp,
         move=earthquake,
-        target=opponent_garchomp,
+        # target=opponent_garchomp,
     )
 
-    opponent_action = Action(
-        action=ActionType.MOVE,
-        pokemon=opponent_garchomp,
+    opponent_action = MoveAction(
+        actor=opponent_garchomp,
         move=earthquake,
-        target=garchomp,
+        # target=garchomp,
     )
 
     starting_hp = garchomp.current_hp
@@ -64,18 +60,16 @@ def test_battle_resolver_gets_next_action(
     opponent_garchomp,
     earthquake,
 ):
-    first_action = Action(
-        action=ActionType.MOVE,
-        pokemon=garchomp,
+    first_action = MoveAction(
+        actor=garchomp,
         move=earthquake,
-        target=opponent_garchomp,
+        # target=opponent_garchomp,
     )
 
-    second_action = Action(
-        action=ActionType.MOVE,
-        pokemon=opponent_garchomp,
+    second_action = MoveAction(
+        actor=opponent_garchomp,
         move=earthquake,
-        target=garchomp,
+        # target=garchomp,
     )
 
     assert (
@@ -94,11 +88,10 @@ def test_fainted_pokemon_cannot_apply_action(
 ):
     garchomp.current_hp = 0
 
-    action = Action(
-        action=ActionType.MOVE,
-        pokemon=garchomp,
+    action = MoveAction(
+        actor=garchomp,
         move=earthquake,
-        target=opponent_garchomp,
+        # target=opponent_garchomp,
     )
 
     starting_hp = opponent_garchomp.current_hp
@@ -114,18 +107,14 @@ def test_get_next_action_uses_speed_when_priorities_are_equal(
     adamant_garchomp,
     tackle,
 ):
-    faster_pokemon_action = Action(
-        action=ActionType.MOVE,
-        pokemon=garchomp,
+    faster_pokemon_action = MoveAction(
+        actor=garchomp,
         move=tackle,
-        target=adamant_garchomp,
     )
 
-    slower_pokemon_action = Action(
-        action=ActionType.MOVE,
-        pokemon=adamant_garchomp,
+    slower_pokemon_action = MoveAction(
+        actor=adamant_garchomp,
         move=tackle,
-        target=garchomp,
     )
 
     next_action = battle_resolver.get_next_action(
