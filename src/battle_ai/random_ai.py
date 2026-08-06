@@ -1,7 +1,14 @@
-from battle.rng import RNG
-from battle_ai.ai import AI
+from battle.action import Action
+from battle.battle_context import BattleContext
+from pokemon import Pokemon
 
 
-class RandomAI(AI):
-    def choose_move(self, pokemon, rng: RNG):
-        return rng.random.choice(pokemon.moves)
+class RandomAI:
+    def choose_action(
+        self,
+        *,
+        battle_context: BattleContext,
+        pokemon: Pokemon,
+        legal_actions: tuple[Action, ...],
+    ) -> Action:
+        return battle_context.rng.choice(legal_actions)
