@@ -30,6 +30,7 @@ class Action(ABC):
 class MoveAction(Action):
     actor: Pokemon
     move: Move
+    target: Pokemon | None = None
 
     @property
     def priority(self) -> int:

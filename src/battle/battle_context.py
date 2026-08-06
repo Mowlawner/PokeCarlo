@@ -19,49 +19,57 @@ class BattleContext:
     ) -> tuple[Pokemon, ...]:
         player_active = self.state.player_active
         opponent_active = self.state.opponent_active
-        opponents = opponent_active if user in player_active else player_active
 
-        allies = player_active if user in player_active else opponent_active
+        if self.is_player_pokemon(user):
+            allies = player_active
+            opponents = opponent_active
+        else:
+            allies = opponent_active
+            opponents = player_active
+
+        living_allies = tuple(pokemon for pokemon in allies if not pokemon.is_fainted)
+
+        living_opponents = tuple(
+            pokemon for pokemon in opponents if not pokemon.is_fainted
+        )
 
         match targeting:
             case MoveTarget.SINGLE_TARGET:
-                if selected_target is None:
-                    raise ValueError("Single target move requires a target.")
+                if selected_target is not None:
+                    if selected_target not in living_opponents:
+                        raise ValueError(
+                            "Selected target is not a valid living opponent."
+                        )
 
-                if not selected_target.is_fainted:
                     return (selected_target,)
 
-                living_opponents = tuple(p for p in opponents if not p.is_fainted)
-
-                if living_opponents:
-                    return (living_opponents[0],)
-
-                return ()
+                return living_opponents
 
             case MoveTarget.SELF:
                 return (user,)
 
             case MoveTarget.ALL_OTHERS:
                 return tuple(
-                    pokemon for pokemon in (*allies, *opponents) if pokemon is not user
+                    pokemon
+                    for pokemon in (*living_allies, *living_opponents)
+                    if pokemon is not user
                 )
 
             case MoveTarget.ALL:
-                return (*allies, *opponents)
+                return (*living_allies, *living_opponents)
 
             case MoveTarget.ALL_OPPONENTS:
-                return opponents
+                return living_opponents
 
             case MoveTarget.ALL_ALLIES:
-                return tuple(pokemon for pokemon in allies if pokemon is not user)
+                return tuple(
+                    pokemon for pokemon in living_allies if pokemon is not user
+                )
 
             case MoveTarget.RANDOM_OPPONENT:
-                # placeholder until RNG integration
-                raise NotImplementedError()
+                return living_opponents
 
             case MoveTarget.FIELD:
-                # This is probably not a tuple[Pokemon] conceptually.
-                # Future refactor: effects target the battle context itself.
                 raise NotImplementedError()
 
             case _:

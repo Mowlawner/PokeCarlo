@@ -3,10 +3,16 @@ from battle.action import MoveAction, SwitchAction
 from battle.decision.legal_actions import get_legal_actions
 
 
-def test_get_legal_actions_returns_moves(
-    battle_context,
-    garchomp,
+def test_get_legal_actions_returns_only_moves_when_no_bench_exists(
+    garchomp, opponent_garchomp, gyarados
 ):
+    battle_state = BattleState(
+        player_active=(garchomp,),
+        opponent_active=(opponent_garchomp,),
+        player_party=(garchomp,),
+        opponent_party=(opponent_garchomp,),
+    )
+    battle_context = BattleContext(state=battle_state, rng=StubRNG())
     actions = get_legal_actions(
         battle_context=battle_context,
         pokemon=garchomp,
@@ -115,12 +121,13 @@ def test_no_bench_pokemon_creates_no_switch_actions(
 def test_legal_actions_returns_moves_and_switches(
     garchomp,
     gyarados,
+    opponent_garchomp,
 ):
     battle_state = BattleState(
         player_active=(garchomp,),
-        opponent_active=(),
+        opponent_active=(opponent_garchomp,),
         player_party=(garchomp, gyarados),
-        opponent_party=(),
+        opponent_party=(opponent_garchomp,),
     )
 
     battle_context = BattleContext(
