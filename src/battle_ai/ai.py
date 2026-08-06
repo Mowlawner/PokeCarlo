@@ -1,13 +1,15 @@
 from typing import Protocol
 
 from battle.action import Action
-from battle.battle_state import BattleState
+from battle.battle_context import BattleContext
+from pokemon import Pokemon
 
 
-class AI:
-    class BattleAI(Protocol):
-        def choose_action(
-            self,
-            state: BattleState,
-        ) -> Action:
-            raise NotImplementedError()
+class BattleAI(Protocol):
+    def choose_action(
+        self,
+        *,
+        battle_context: BattleContext,
+        pokemon: Pokemon,
+        legal_actions: tuple[Action, ...],
+    ) -> Action: ...
