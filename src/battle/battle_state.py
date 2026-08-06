@@ -18,6 +18,8 @@ class BattleState:
     weather: Weather | None = None
     terrain: Terrain | None = None
 
+    pending_switches: tuple[Pokemon, ...] = ()
+
     def __post_init__(self) -> None:
         if self.player_party is None:
             self.player_party = self.player_active
@@ -120,3 +122,52 @@ class BattleState:
             return
 
         raise ValueError("Outgoing Pokémon is not currently active.")
+
+    def has_pending_switch(
+        self,
+        pokemon: Pokemon,
+    ) -> bool:
+        """
+        Return whether a Pokémon is already waiting for replacement.
+
+        Args:
+            pokemon: The Pokémon to check.
+
+        Returns:
+            True if the Pokémon is already in the pending switch queue.
+        """
+        return any(pending is pokemon for pending in self.pending_switches)
+
+    def add_pending_switch(
+        self,
+        pokemon: Pokemon,
+    ) -> None:
+        """
+        Add an active Pokémon to the pending switch queue.
+
+        Pending switches are processed after the current action resolution completes.
+        This prevents the battle resolver from being interrupted by mid-turn state
+        changes.
+
+        Args:
+            pokemon: The active Pokémon requiring replacement.
+
+        Raises:
+            ValueError: If the Pokémon is not active, or is already pending.
+        """
+        if not any(
+            active is pokemon
+            for active in (
+                *self.player_active,
+                *self.opponent_active,
+            )
+        ):
+            raise ValueError("Only active Pokémon can have a pending switch.")
+
+        if self.has_pending_switch(pokemon):
+            raise ValueError("Pokémon already has a pending switch.")
+
+        self.pending_switches = (
+            *self.pending_switches,
+            pokemon,
+        )

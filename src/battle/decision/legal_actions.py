@@ -12,7 +12,7 @@ def get_legal_actions(
     actions: list[Action] = []
 
     for move in pokemon.pokemon_set.moves:
-        targets = battle_context.get_targets(
+        targets = battle_context.get_legal_targets(
             user=pokemon,
             targeting=move.targeting,
         )
