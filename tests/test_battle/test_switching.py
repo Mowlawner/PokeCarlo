@@ -8,6 +8,7 @@ def test_player_switching_works(garchomp, gyarados, opponent_garchomp):
     battle_state = BattleState(
         player_active=(garchomp,),
         opponent_active=(opponent_garchomp,),
+        player_party=(garchomp, gyarados),
     )
     battle_context = BattleContext(state=battle_state, rng=StubRNG())
     battle_resolver = BattleResolver(context=battle_context)
@@ -21,7 +22,12 @@ def test_player_switching_works(garchomp, gyarados, opponent_garchomp):
 
 def test_opponent_switching_works(garchomp, opponent_garchomp, gyarados):
     battle_state = BattleState(
-        player_active=(garchomp,), opponent_active=(opponent_garchomp,)
+        player_active=(garchomp,),
+        opponent_active=(opponent_garchomp,),
+        opponent_party=(
+            opponent_garchomp,
+            gyarados,
+        ),
     )
     battle_context = BattleContext(state=battle_state, rng=StubRNG())
     battle_resolver = BattleResolver(context=battle_context)
