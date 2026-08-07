@@ -28,8 +28,8 @@ class SpeciesImporter:
         }
 
     def _canonical_name(
-            self,
-            name: str,
+        self,
+        name: str,
     ) -> str:
         return name.upper().replace("-", "_")
 

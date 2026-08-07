@@ -17,10 +17,12 @@ class PokemonImporter:
             "species_name": self._canonical_name(
                 pokemon_data["species"]["name"],
             ),
-            "display_name": pokemon_data["name"].replace(
+            "display_name": pokemon_data["name"]
+            .replace(
                 "-",
                 " ",
-            ).title(),
+            )
+            .title(),
             "types": self._extract_types(pokemon_data),
             "base_stats": self._extract_base_stats(pokemon_data),
             "abilities": self._extract_abilities(pokemon_data),

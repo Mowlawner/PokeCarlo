@@ -14,10 +14,15 @@ from stats.stat import Stat
 def test_move_can_be_created():
     move = Move(
         name="Earthquake",
+        display_name="Earthquake",
+        id=89,
         accuracy=100,
+        pp=10,
+        power=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=100),),
+        move_flags=(),
     )
 
     assert move.name == "Earthquake"
@@ -28,10 +33,15 @@ def test_move_can_be_created():
 def test_move_can_have_no_accuracy():
     move = Move(
         name="Aerial Ace",
+        display_name="Aerial Ace",
+        id=332,
         accuracy=None,
+        pp=20,
+        power=60,
         move_type=Type.FLYING,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=60),),
+        move_flags=(),
     )
 
     assert move.accuracy is None
@@ -40,10 +50,15 @@ def test_move_can_have_no_accuracy():
 def test_move_is_immutable():
     move = Move(
         name="Tackle",
+        display_name="Tackle",
+        id=33,
         accuracy=100,
+        pp=35,
+        power=40,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=40),),
+        move_flags=(),
     )
 
     with pytest.raises(FrozenInstanceError):
@@ -54,10 +69,15 @@ def test_negative_power_raises():
     with pytest.raises(ValueError):
         Move(
             name="Bad Move",
+            display_name="Bad Move",
+            id=0,
             accuracy=100,
+            pp=1,
+            power=-1,
             move_type=Type.NORMAL,
             category=MoveCategory.PHYSICAL,
             effects=(DamageEffect(power=-1),),
+            move_flags=(),
         )
 
 
@@ -65,10 +85,15 @@ def test_accuracy_above_100_raises():
     with pytest.raises(ValueError):
         Move(
             name="Impossible",
+            display_name="Impossible",
+            id=0,
             accuracy=101,
+            pp=1,
+            power=50,
             move_type=Type.NORMAL,
             category=MoveCategory.PHYSICAL,
             effects=(DamageEffect(power=50),),
+            move_flags=(),
         )
 
 
@@ -76,10 +101,15 @@ def test_zero_accuracy_raises():
     with pytest.raises(ValueError):
         Move(
             name="Broken",
+            display_name="Broken",
+            id=0,
             accuracy=0,
+            pp=1,
+            power=50,
             move_type=Type.NORMAL,
             category=MoveCategory.PHYSICAL,
             effects=(DamageEffect(power=50),),
+            move_flags=(),
         )
 
 
@@ -87,21 +117,31 @@ def test_negative_accuracy_raises():
     with pytest.raises(ValueError):
         Move(
             name="Impossible",
+            display_name="Impossible",
+            id=0,
             accuracy=-1,
+            pp=1,
+            power=50,
             move_type=Type.NORMAL,
             category=MoveCategory.PHYSICAL,
             effects=(DamageEffect(power=50),),
+            move_flags=(),
         )
 
 
 def test_non_default_priority_is_allowed():
     move = Move(
         name="Quick Attack",
+        display_name="Quick Attack",
+        id=98,
         accuracy=100,
+        pp=30,
+        power=40,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
         priority=1,
         effects=(DamageEffect(power=40),),
+        move_flags=(),
     )
     assert move.priority == 1
 
@@ -110,21 +150,31 @@ def test_invalid_priority_raises():
     with pytest.raises(ValueError):
         Move(
             name="Impossible Priority",
+            display_name="Impossible Priority",
+            id=0,
             accuracy=100,
+            pp=1,
+            power=1,
             move_type=Type.NORMAL,
             category=MoveCategory.PHYSICAL,
             priority=6,
             effects=(DamageEffect(power=1),),
+            move_flags=(),
         )
 
 
 def test_priority_defaults_to_zero():
     move = Move(
         name="Tackle",
+        display_name="Tackle",
+        id=33,
         accuracy=100,
+        pp=35,
+        power=40,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=40),),
+        move_flags=(),
     )
 
     assert move.priority == 0
@@ -133,7 +183,11 @@ def test_priority_defaults_to_zero():
 def test_move_category_is_enum():
     move = Move(
         name="Swords Dance",
+        display_name="Swords Dance",
+        id=14,
         accuracy=None,
+        pp=20,
+        power=None,
         move_type=Type.NORMAL,
         category=MoveCategory.STATUS,
         effects=(
@@ -142,6 +196,7 @@ def test_move_category_is_enum():
                 stages=2,
             ),
         ),
+        move_flags=(),
     )
 
     assert move.category == MoveCategory.STATUS
@@ -151,20 +206,30 @@ def test_status_move_cannot_have_damage_effect():
     with pytest.raises(ValueError):
         Move(
             name="Fake Damage Status",
+            display_name="Fake Damage Status",
+            id=0,
             accuracy=None,
+            pp=1,
+            power=None,
             move_type=Type.NORMAL,
             category=MoveCategory.STATUS,
             effects=(DamageEffect(power=0),),
+            move_flags=(),
         )
 
 
 def test_move_has_targeting_type():
     move = Move(
         name="Earthquake",
+        display_name="Earthquake",
+        id=89,
         accuracy=100,
+        pp=10,
+        power=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=100),),
+        move_flags=(),
         targeting=MoveTarget.ALL_OTHERS,
     )
 
@@ -174,10 +239,15 @@ def test_move_has_targeting_type():
 def test_targeting_defaults_to_single_target():
     move = Move(
         name="Dragon Claw",
+        display_name="Dragon Claw",
+        id=337,
         accuracy=100,
+        pp=15,
+        power=80,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=80),),
+        move_flags=(),
     )
 
     assert move.targeting is MoveTarget.SINGLE_TARGET
@@ -186,7 +256,11 @@ def test_targeting_defaults_to_single_target():
 def test_move_can_have_multiple_effects():
     move = Move(
         name="Dragon Claw",
+        display_name="Dragon Claw",
+        id=337,
         accuracy=100,
+        pp=15,
+        power=80,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
         effects=(
@@ -196,6 +270,7 @@ def test_move_can_have_multiple_effects():
                 stages=1,
             ),
         ),
+        move_flags=(),
     )
 
     assert len(move.effects) == 2
