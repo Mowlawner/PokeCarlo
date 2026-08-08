@@ -2,7 +2,7 @@ from move import MoveTarget
 
 
 def test_self_target_returns_user(garchomp, battle_context):
-    targets = battle_context.get_targets(
+    targets = battle_context.resolve_targets(
         user=garchomp,
         targeting=MoveTarget.SELF,
     )
@@ -15,7 +15,7 @@ def test_single_target_returns_selected_target(
     opponent_garchomp,
     battle_context,
 ):
-    targets = battle_context.get_targets(
+    targets = battle_context.resolve_targets(
         user=garchomp,
         targeting=MoveTarget.SINGLE_TARGET,
         selected_target=opponent_garchomp,
@@ -30,7 +30,7 @@ def test_all_opponents_returns_all_opponents(
     second_opponent_garchomp,
     battle_context,
 ):
-    targets = battle_context.get_targets(
+    targets = battle_context.resolve_targets(
         user=garchomp,
         targeting=MoveTarget.ALL_OPPONENTS,
     )
@@ -48,7 +48,7 @@ def test_all_others_excludes_user(
     second_opponent_garchomp,
     battle_context,
 ):
-    targets = battle_context.get_targets(
+    targets = battle_context.resolve_targets(
         user=garchomp,
         targeting=MoveTarget.ALL_OTHERS,
     )
@@ -67,7 +67,7 @@ def test_all_includes_user(
     second_opponent_garchomp,
     battle_context,
 ):
-    targets = battle_context.get_targets(
+    targets = battle_context.resolve_targets(
         user=garchomp,
         targeting=MoveTarget.ALL,
     )

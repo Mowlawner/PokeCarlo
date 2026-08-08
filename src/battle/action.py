@@ -37,9 +37,8 @@ class MoveAction(Action):
         return self.move.priority
 
     def _apply(self, context: BattleContext) -> None:
-        targets = context.get_targets(
-            user=self.actor,
-            targeting=self.move.targeting,
+        targets = context.resolve_targets(
+            user=self.actor, targeting=self.move.targeting, selected_target=self.target
         )
 
         self.move.apply(
