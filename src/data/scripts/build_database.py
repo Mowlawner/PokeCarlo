@@ -8,6 +8,7 @@ from typing import Any
 
 import requests
 
+from database.ability_importer import AbilityImporter
 from database.learnset_importer import LearnsetImporter
 from database.move_importer import MoveImporter
 from database.pokemon_importer import PokemonImporter
@@ -24,10 +25,12 @@ GENERATED_DATA_DIR = PROJECT_ROOT / "data" / "generated"
 RAW_POKEMON_DIR = RAW_DATA_DIR / "pokemon"
 RAW_SPECIES_DIR = RAW_DATA_DIR / "species"
 RAW_MOVE_DIR = RAW_DATA_DIR / "moves"
+RAW_ABILITY_DIR = RAW_DATA_DIR / "abilities"
 
 GENERATED_POKEMON_DIR = GENERATED_DATA_DIR / "pokemon"
 GENERATED_MOVE_DIR = GENERATED_DATA_DIR / "moves"
 GENERATED_LEARNSET_DIR = GENERATED_DATA_DIR / "learnsets" / TARGET_VERSION_GROUP
+GENERATED_ABILITY_DIR = GENERATED_DATA_DIR / "abilities"
 
 
 for directory in (
@@ -37,6 +40,8 @@ for directory in (
     GENERATED_POKEMON_DIR,
     GENERATED_MOVE_DIR,
     GENERATED_LEARNSET_DIR,
+    RAW_ABILITY_DIR,
+    GENERATED_ABILITY_DIR,
 ):
     directory.mkdir(
         parents=True,
@@ -236,6 +241,38 @@ def build_move(
     )
 
 
+def build_ability(
+    name: str,
+    force: bool = False,
+) -> None:
+    print(f"\nBuilding ability: {name}")
+
+    ability_raw = get_ability(
+        name,
+        force=force,
+    )
+
+    ability_entry = AbilityImporter().to_database_model(
+        ability_raw,
+    )
+
+    save_json(
+        ability_entry,
+        GENERATED_ABILITY_DIR / f"{name}.json",
+    )
+
+
+def get_ability(
+    name: str,
+    force: bool = False,
+) -> dict[str, Any]:
+    return fetch_cached(
+        f"ability/{name}",
+        RAW_ABILITY_DIR / f"{name}.json",
+        force=force,
+    )
+
+
 def get_index(
     endpoint: str,
     cache_name: str,
@@ -273,6 +310,19 @@ def build_all_moves() -> None:
         build_move(name)
 
 
+def build_all_abilities() -> None:
+    ability_names = get_index(
+        "ability?limit=100000",
+        "ability_index.json",
+    )
+
+    total = len(ability_names)
+
+    for index, name in enumerate(ability_names, start=1):
+        print(f"\n[{index}/{total}] Building ability: {name}")
+        build_ability(name)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build the PokeCarlo JSON database.",
@@ -306,6 +356,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Ignore cached raw data and redownload from PokéAPI.",
     )
+    parser.add_argument(
+        "--ability",
+        nargs="+",
+        help="Build specific abilities.",
+    )
+
+    parser.add_argument(
+        "--all-abilities",
+        action="store_true",
+        help="Build every ability.",
+    )
 
     return parser.parse_args()
 
@@ -327,11 +388,21 @@ def main() -> None:
                 force=args.force,
             )
 
+    if args.ability:
+        for name in args.ability:
+            build_ability(
+                name,
+                force=args.force,
+            )
+
     if args.all_pokemon:
         build_all_pokemon()
 
     if args.all_moves:
         build_all_moves()
+
+    if args.all_abilities:
+        build_all_abilities()
 
     if not any(
         (
@@ -339,6 +410,8 @@ def main() -> None:
             args.move,
             args.all_pokemon,
             args.all_moves,
+            args.ability,
+            args.all_abilities,
         )
     ):
         print("Nothing selected. Use --help for options.")
