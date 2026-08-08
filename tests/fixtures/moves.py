@@ -25,22 +25,32 @@ def move_context_factory():
 @pytest.fixture
 def tackle() -> Move:
     return Move(
-        name="Tackle",
+        name="TACKLE",
+        display_name="Tackle",
+        id=33,
         accuracy=100,
+        pp=35,
+        power=40,
         move_type=Type.NORMAL,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=40),),
+        move_flags=(),
     )
 
 
 @pytest.fixture
 def earthquake() -> Move:
     return Move(
-        name="Earthquake",
+        name="EARTHQUAKE",
+        display_name="Earthquake",
+        id=89,
         accuracy=100,
+        pp=10,
+        power=100,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=100),),
+        move_flags=(),
         targeting=MoveTarget.ALL_OTHERS,
     )
 
@@ -48,22 +58,32 @@ def earthquake() -> Move:
 @pytest.fixture
 def dragon_claw() -> Move:
     return Move(
-        name="Dragon Claw",
+        name="DRAGON_CLAW",
+        display_name="Dragon Claw",
+        id=337,
         accuracy=100,
+        pp=15,
+        power=80,
         move_type=Type.DRAGON,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=80),),
+        move_flags=(),
     )
 
 
 @pytest.fixture
 def rock_slide() -> Move:
     return Move(
-        name="Rock Slide",
+        name="ROCK_SLIDE",
+        display_name="Rock Slide",
+        id=157,
         accuracy=90,
+        pp=10,
+        power=75,
         move_type=Type.ROCK,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=75),),
+        move_flags=(),
         targeting=MoveTarget.ALL_OPPONENTS,
     )
 
@@ -71,8 +91,12 @@ def rock_slide() -> Move:
 @pytest.fixture
 def swords_dance() -> Move:
     return Move(
-        name="Swords Dance",
+        name="SWORDS_DANCE",
+        display_name="Swords Dance",
+        id=14,
         accuracy=None,  # or however you decide to represent "never misses"
+        pp=20,
+        power=None,
         move_type=Type.NORMAL,
         category=MoveCategory.STATUS,
         effects=(
@@ -81,28 +105,39 @@ def swords_dance() -> Move:
                 stages=2,
             ),
         ),
+        move_flags=(),
     )
 
 
 @pytest.fixture
 def high_horsepower() -> Move:
     return Move(
-        name="High Horsepower",
+        name="HIGH_HORSEPOWER",
+        display_name="High Horsepower",
+        id=667,
         accuracy=95,
+        pp=10,
+        power=95,
         move_type=Type.GROUND,
         category=MoveCategory.PHYSICAL,
         effects=(DamageEffect(power=95),),
+        move_flags=(),
     )
 
 
 @pytest.fixture
 def protect():
     return Move(
-        name="Protect",
+        name="PROTECT",
+        display_name="Protect",
+        id=182,
         accuracy=None,
+        pp=10,
+        power=None,
         move_type=Type.NORMAL,
         category=MoveCategory.STATUS,
         effects=(),
+        move_flags=(),
         targeting=MoveTarget.SELF,
         priority=4,
     )

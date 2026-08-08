@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*.egg-info/
 
 # IDE
 .idea/
@@ -12,3 +13,9 @@ pfind/
 # Packaging
 dist/
 *.egg-info/
+
+# Generated data
+src/data/generated/
+
+# Raw API dumps
+src/data/raw/
