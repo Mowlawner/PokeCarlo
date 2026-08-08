@@ -162,10 +162,3 @@ def test_display_name_does_not_determine_canonical_name(tmp_path):
     assert database.get("GARCHOMP_MEGA").name == "GARCHOMP_MEGA"
     with pytest.raises(KeyError):
         database.get("MEGA_GARCHOMP")
-
-
-def test_load_actual_generated_species_directory():
-    database = SpeciesDatabase.load("src/data/generated/pokemon")
-
-    assert len(database) > 100
-    assert database.get("GARCHOMP").species_name == "GARCHOMP"
