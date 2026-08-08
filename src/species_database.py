@@ -1,9 +1,5 @@
-from pokemon_species import PokemonSpecies
+"""Backward-compatible import for the runtime species database."""
 
+from database.species_database import SpeciesDatabase
 
-class SpeciesDatabase:
-    def __init__(self, species: dict[str, PokemonSpecies]):
-        self._species = species
-
-    def get(self, name: str) -> PokemonSpecies:
-        return self._species[name]
+__all__ = ["SpeciesDatabase"]

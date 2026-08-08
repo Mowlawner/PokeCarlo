@@ -14,6 +14,7 @@ class PokemonImporter:
     ) -> dict[str, Any]:
         return {
             "pokemon_id": pokemon_data["id"],
+            "name": self._canonical_name(pokemon_data["name"]),
             "species_name": self._canonical_name(
                 pokemon_data["species"]["name"],
             ),

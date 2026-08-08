@@ -4,7 +4,7 @@ from abilities.ability import Ability
 from move import Move
 from pokemon import Pokemon
 from pokemon_set import PokemonSet
-from pokemon_species import PokemonSpecies
+from pokemon_species import Species
 from pokemon_types import Type
 from stats.base_stats import BaseStats
 from stats.evs import EVs
@@ -14,9 +14,13 @@ from stats.nature import Nature
 
 ###SPECIES###
 @pytest.fixture
-def garchomp_species(rough_skin, sand_veil) -> PokemonSpecies:
-    return PokemonSpecies(
-        name="Garchomp",
+def garchomp_species(rough_skin, sand_veil) -> Species:
+    return Species(
+        name="GARCHOMP",
+        display_name="Garchomp",
+        species_name="GARCHOMP",
+        pokemon_id=445,
+        national_dex=445,
         types=(Type.DRAGON, Type.GROUND),
         base_stats=BaseStats(
             hp=108,
@@ -26,14 +30,18 @@ def garchomp_species(rough_skin, sand_veil) -> PokemonSpecies:
             sp_defense=85,
             speed=102,
         ),
-        abilities=(rough_skin, sand_veil),
+        abilities=(rough_skin.name, sand_veil.name),
     )
 
 
 @pytest.fixture
-def gyarados_species(intimidate, moxie) -> PokemonSpecies:
-    return PokemonSpecies(
-        name="Gyarados",
+def gyarados_species(intimidate, moxie) -> Species:
+    return Species(
+        name="GYARADOS",
+        display_name="Gyarados",
+        species_name="GYARADOS",
+        pokemon_id=130,
+        national_dex=130,
         types=(Type.WATER, Type.FLYING),
         base_stats=BaseStats(
             hp=95,
@@ -43,14 +51,18 @@ def gyarados_species(intimidate, moxie) -> PokemonSpecies:
             sp_defense=100,
             speed=81,
         ),
-        abilities=(intimidate, moxie),
+        abilities=(intimidate.name, moxie.name),
     )
 
 
 @pytest.fixture
-def tyranitar_species(sand_stream, unnerve) -> PokemonSpecies:
-    return PokemonSpecies(
-        name="Tyranitar",
+def tyranitar_species(sand_stream, unnerve) -> Species:
+    return Species(
+        name="TYRANITAR",
+        display_name="Tyranitar",
+        species_name="TYRANITAR",
+        pokemon_id=248,
+        national_dex=248,
         types=(
             Type.ROCK,
             Type.DARK,
@@ -63,10 +75,7 @@ def tyranitar_species(sand_stream, unnerve) -> PokemonSpecies:
             sp_defense=100,
             speed=61,
         ),
-        abilities=(
-            sand_stream,
-            unnerve,
-        ),
+        abilities=(sand_stream.name, unnerve.name),
     )
 
 
@@ -75,7 +84,7 @@ def tyranitar_species(sand_stream, unnerve) -> PokemonSpecies:
 
 @pytest.fixture
 def jolly_garchomp_set(
-    garchomp_species: PokemonSpecies, tackle: Move, rough_skin: Ability
+    garchomp_species: Species, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
     return PokemonSet(
         species=garchomp_species,
@@ -104,7 +113,7 @@ def jolly_garchomp_set(
 
 @pytest.fixture
 def jolly_gyarados_set(
-    gyarados_species: PokemonSpecies, tackle: Move, intimidate: Ability
+    gyarados_species: Species, tackle: Move, intimidate: Ability
 ) -> PokemonSet:
     return PokemonSet(
         species=gyarados_species,
@@ -133,7 +142,7 @@ def jolly_gyarados_set(
 
 @pytest.fixture
 def adamant_garchomp_set(
-    garchomp_species: PokemonSpecies, tackle: Move, rough_skin: Ability
+    garchomp_species: Species, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
     return PokemonSet(
         species=garchomp_species,
@@ -164,6 +173,7 @@ def adamant_garchomp_set(
 def bulky_tyranitar_set(
     tyranitar_species,
     tackle,
+    sand_stream,
 ):
     return PokemonSet(
         species=tyranitar_species,
@@ -186,7 +196,7 @@ def bulky_tyranitar_set(
             speed=0,
         ),
         moves=(tackle,),
-        ability=tyranitar_species.abilities[0],
+        ability=sand_stream,
     )
 
 

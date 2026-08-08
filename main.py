@@ -1,11 +1,10 @@
-from pokemon_species import PokemonSpecies
 from utils import load_species_db
 
 
 def main():
-    species = load_species_db(path_to_json="./src/data/species.json")
-    garchomp = PokemonSpecies.from_json(species["Garchomp"], name="Garchomp")
-    rotom_heat = PokemonSpecies.from_json(species["Rotom-Heat"], name="Rotom-Heat")
+    species = load_species_db(directory_path="./src/data/generated/pokemon")
+    garchomp = species.get("Garchomp")
+    rotom_heat = species.get("Rotom-Heat")
     for pkmn in [garchomp, rotom_heat]:
         print(
             f"Loaded species {pkmn.name} with types {pkmn.types} and base stats:\nHP:\t{
