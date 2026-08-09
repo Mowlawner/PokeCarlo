@@ -4,6 +4,7 @@ import pytest
 
 from database.move_database import MoveDatabase
 from move.move_category import MoveCategory
+from move_effects.damage_effect import DamageEffect
 from pokemon_types import Type
 
 
@@ -36,7 +37,9 @@ def test_load_move_database(tmp_path):
     assert move.accuracy == 100
     assert move.move_type == Type.GRASS
     assert move.category == MoveCategory.SPECIAL
-    assert len(move.effects) == 0
+    assert len(move.effects) == 1
+    assert isinstance(move.effects[0], DamageEffect)
+    assert move.effects[0].power == 20
     assert move.power == 20
     assert move.pp == 25
     assert move.display_name == "Absorb"

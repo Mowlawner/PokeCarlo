@@ -7,6 +7,7 @@ from pathlib import Path
 from move.move import Move
 from move.move_category import MoveCategory
 from move.targeting import MoveTarget
+from move_effects.damage_effect import DamageEffect
 from pokemon_types import Type
 
 
@@ -31,16 +32,29 @@ class MoveDatabase:
         for json_file in path.glob("*.json"):
             with json_file.open("r", encoding="utf-8") as f:
                 data = json.load(f)
+                category = MoveCategory[data["category"]]
+                power = data["power"]
+                effects = ()
+
+                # The first executable database slice supports ordinary
+                # single-hit damaging moves. Specialized move behavior stays
+                # out of the database loader until it has a dedicated effect.
+                if power is not None and category in (
+                    MoveCategory.PHYSICAL,
+                    MoveCategory.SPECIAL,
+                ):
+                    effects = (DamageEffect(power=power),)
+
                 move = Move(
                     name=data["move_name"],
                     display_name=data["display_name"],
                     id=data["id"],
                     accuracy=data["accuracy"],
                     pp=data["pp"],
-                    power=data["power"],
+                    power=power,
                     move_type=Type[data["move_type"]],
-                    category=MoveCategory[data["category"]],
-                    effects=(),  # Parsing gameplay behavior (effects) belongs elsewhere
+                    category=category,
+                    effects=effects,
                     move_flags=tuple(data["move_flags"]),
                     targeting=MoveTarget[data["target"]],
                     priority=data["priority"],
