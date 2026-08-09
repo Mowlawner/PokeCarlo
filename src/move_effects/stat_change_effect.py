@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from battle.battle_context import BattleContext
 from move.move_context import MoveContext
+from move_effects.move_effect import MoveEffectResult, StatStageChange
 from stats.stat import Stat
 from stats.stat_utils import modify_stage
 
@@ -30,10 +31,24 @@ class StatChangeEffect:
         targets: tuple["Pokemon", ...],
         move_context: MoveContext,
         battle_context: BattleContext,
-    ) -> None:
+    ) -> MoveEffectResult:
+        changes = []
         for target in targets:
-            modify_stage(
+            actual_change = modify_stage(
                 target.stat_stages,
                 self.stat,
                 self.stages,
             )
+            if actual_change:
+                changes.append(
+                    StatStageChange(
+                        target=target,
+                        stat=self.stat,
+                        amount=actual_change,
+                    )
+                )
+
+        return MoveEffectResult(
+            applied=bool(changes),
+            stat_stage_changes=tuple(changes),
+        )

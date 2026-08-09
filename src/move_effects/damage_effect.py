@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from damage_calculator import calculate_damage
 from move.move_category import MoveCategory
 from move.move_context import MoveContext
+from move_effects.move_effect import MoveEffectResult
 from pokemon_types.type_chart import effectiveness
 from stats.stat import Stat
 from stats.stat_engine import StatRole, get_effective_stat
@@ -32,8 +33,9 @@ class DamageEffect:
         targets: tuple["Pokemon", ...],
         move_context: MoveContext,
         battle_context: "BattleContext",
-    ) -> None:
+    ) -> MoveEffectResult:
         stab = 1.5 if move_context.move_type in user.pokemon_set.species.types else 1.0
+        applied = False
 
         for target in targets:
             type_effectiveness = effectiveness(
@@ -82,6 +84,9 @@ class DamageEffect:
             )
 
             target.take_damage(damage)
+            applied = applied or damage > 0
+
+        return MoveEffectResult(applied=applied)
 
 
 def resolve_defaults(

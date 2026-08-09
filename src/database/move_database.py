@@ -8,7 +8,9 @@ from move.move import Move
 from move.move_category import MoveCategory
 from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect
+from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_types import Type
+from stats.stat import Stat
 
 
 class MoveDatabase:
@@ -34,14 +36,22 @@ class MoveDatabase:
                 data = json.load(f)
                 category = MoveCategory[data["category"]]
                 power = data["power"]
-                effects = ()
+                effects = tuple(
+                    cls._load_effect(effect_data)
+                    for effect_data in data.get("effects", [])
+                )
 
                 # The first executable database slice supports ordinary
                 # single-hit damaging moves. Specialized move behavior stays
                 # out of the database loader until it has a dedicated effect.
-                if power is not None and category in (
-                    MoveCategory.PHYSICAL,
-                    MoveCategory.SPECIAL,
+                if (
+                    power is not None
+                    and not effects
+                    and category
+                    in (
+                        MoveCategory.PHYSICAL,
+                        MoveCategory.SPECIAL,
+                    )
                 ):
                     effects = (DamageEffect(power=power),)
 
@@ -62,6 +72,16 @@ class MoveDatabase:
                 moves[move.name] = move
 
         return cls(moves)
+
+    @staticmethod
+    def _load_effect(effect_data: dict[str, object]):
+        if effect_data["type"] == "stat_change":
+            return StatChangeEffect(
+                stat=Stat[effect_data["stat"]],
+                stages=effect_data["stages"],
+            )
+
+        raise ValueError(f"Unsupported move effect: {effect_data['type']}")
 
     def get(self, name: str) -> Move:
         """
