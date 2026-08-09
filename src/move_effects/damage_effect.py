@@ -52,7 +52,7 @@ class DamageEffect:
                 critical=is_critical,
             )
 
-            damage = user.pokemon_set.ability.modify_outgoing_damage(
+            damage = user.ability.modify_outgoing_damage(
                 damage=damage,
                 user=user,
                 target=target,

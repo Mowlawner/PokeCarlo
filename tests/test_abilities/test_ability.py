@@ -142,7 +142,7 @@ def test_base_ability_does_not_modify_damage(
 
 
 def test_intimidate_lowers_opponents_attack_by_one_stage(garchomp, gyarados):
-    gyarados.pokemon_set.ability.on_switch_in(
+    gyarados.ability.on_switch_in(
         pokemon=gyarados,
         battle_context=BattleContext(
             state=BattleState(

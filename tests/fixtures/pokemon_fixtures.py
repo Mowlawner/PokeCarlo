@@ -1,6 +1,6 @@
 import pytest
 
-from abilities.ability import Ability
+from ability import Ability
 from move import Move
 from pokemon import Pokemon
 from pokemon_set import PokemonSet

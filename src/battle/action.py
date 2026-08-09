@@ -63,7 +63,7 @@ class SwitchAction(Action):
             incoming=self.incoming,
         )
 
-        self.incoming.pokemon_set.ability.on_switch_in(
+        self.incoming.ability.on_switch_in(
             pokemon=self.incoming,
             battle_context=context,
         )

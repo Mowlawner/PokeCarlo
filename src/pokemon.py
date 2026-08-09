@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from abilities.ability import Ability
+from abilities.resolver import resolve_ability
 from pokemon_set import PokemonSet
 from stats.stat_calculator import calculate_stats
 from stats.stat_stages import StatStages
@@ -10,6 +12,7 @@ from status_condition import StatusCondition
 @dataclass(slots=True)
 class Pokemon:
     pokemon_set: PokemonSet
+    ability: Ability
 
     stats: Stats
     current_hp: int
@@ -33,9 +36,11 @@ class Pokemon:
             nature=pokemon_set.nature,
             level=pokemon_set.level,
         )
+        runtime_ability = resolve_ability(pokemon_set.ability.name)
 
         return cls(
             pokemon_set=pokemon_set,
+            ability=runtime_ability,
             stats=calculated_stats,
             current_hp=calculated_stats.hp,
             stat_stages=StatStages(),

@@ -1,5 +1,6 @@
 import pytest
 
+from abilities.not_implemented_abilities import RoughSkin
 from ability import Ability
 from database.ability_database import AbilityDatabase
 from database.item_database import ItemDatabase
@@ -140,5 +141,7 @@ def test_resolved_set_constructs_pokemon(
     pokemon = Pokemon.from_set(pokemon_set)
 
     assert pokemon.pokemon_set is pokemon_set
+    assert isinstance(pokemon.ability, RoughSkin)
+    assert pokemon.pokemon_set.ability.name == "ROUGH_SKIN"
     assert pokemon.current_hp == pokemon.stats.hp
     assert not hasattr(pokemon_set, "learnset")
