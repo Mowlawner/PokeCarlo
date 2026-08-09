@@ -2,6 +2,9 @@ from dataclasses import FrozenInstanceError, fields, replace
 
 import pytest
 
+from abilities.intimidate import Intimidate
+from abilities.low_hp_type_boost_ability import Blaze
+from abilities.not_implemented_abilities import RoughSkin
 from ability import Ability
 from item import Item
 from pokemon import Pokemon
@@ -62,6 +65,7 @@ def test_from_set(jolly_garchomp_set):
     pokemon = Pokemon.from_set(jolly_garchomp_set)
 
     assert pokemon.pokemon_set is jolly_garchomp_set
+    assert isinstance(pokemon.ability, RoughSkin)
 
     assert pokemon.current_hp == pokemon.stats.hp
     assert pokemon.stat_stages == StatStages()
@@ -73,6 +77,33 @@ def test_from_set(jolly_garchomp_set):
     pokemon.current_hp = 1
 
     assert not pokemon.is_fainted
+
+
+def test_from_set_resolves_intimidate(jolly_gyarados_set):
+    pokemon = Pokemon.from_set(jolly_gyarados_set)
+
+    assert isinstance(pokemon.ability, Intimidate)
+    assert pokemon.pokemon_set.ability.name == "INTIMIDATE"
+
+
+def test_from_set_resolves_blaze(jolly_garchomp_set):
+    blaze = Ability(
+        name="BLAZE",
+        display_name="Blaze",
+        id=66,
+        generation="GENERATION_III",
+    )
+    blaze_species = replace(jolly_garchomp_set.species, abilities=("BLAZE",))
+    blaze_set = replace(
+        jolly_garchomp_set,
+        species=blaze_species,
+        ability=blaze,
+    )
+
+    pokemon = Pokemon.from_set(blaze_set)
+
+    assert isinstance(pokemon.ability, Blaze)
+    assert pokemon.pokemon_set.ability is blaze
 
 
 def test_duplicate_moves_raise(

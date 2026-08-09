@@ -77,7 +77,7 @@ def test_switching_triggers_incoming_switch_in_ability(
         called["battle_context"] = battle_context
 
     monkeypatch.setattr(
-        gyarados.pokemon_set.ability,
+        gyarados.ability,
         "on_switch_in",
         on_switch_in,
     )

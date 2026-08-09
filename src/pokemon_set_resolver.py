@@ -44,9 +44,7 @@ class PokemonSetResolver:
         species = self._species_database.get(species_name)
         ability = self._ability_database.get(ability_name)
         moves = tuple(self._move_database.get(name) for name in move_names)
-        item = (
-            self._item_database.get(item_name) if item_name is not None else None
-        )
+        item = self._item_database.get(item_name) if item_name is not None else None
         learnset = self._learnset_database.get(species.name)
 
         return PokemonSet.from_components(

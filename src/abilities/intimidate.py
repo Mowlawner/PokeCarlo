@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Intimidate(Ability):
-    name = "Intimidate"
+    name = "INTIMIDATE"
 
     def on_switch_in(
         self,

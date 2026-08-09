@@ -3,35 +3,35 @@ from abilities.ability import Ability
 
 
 class RoughSkin(Ability):
-    name = "Rough Skin"
+    name = "ROUGH_SKIN"
 
 
 ROUGH_SKIN = RoughSkin()
 
 
 class SandVeil(Ability):
-    name = "Sand Veil"
+    name = "SAND_VEIL"
 
 
 SAND_VEIL = SandVeil()
 
 
 class Moxie(Ability):
-    name = "Moxie"
+    name = "MOXIE"
 
 
 MOXIE = Moxie()
 
 
 class SandStream(Ability):
-    name = "Sand Stream"
+    name = "SAND_STREAM"
 
 
 SAND_STREAM = SandStream()
 
 
 class Unnerve(Ability):
-    name = "Unnerve"
+    name = "UNNERVE"
 
 
 UNNERVE = Unnerve()

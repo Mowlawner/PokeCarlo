@@ -60,7 +60,7 @@ def get_effective_stat(
     ):
         value //= 2
 
-    value = pokemon.pokemon_set.ability.modify_effective_stat(
+    value = pokemon.ability.modify_effective_stat(
         value=value,
         pokemon=pokemon,
         stat=stat,

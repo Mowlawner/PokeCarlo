@@ -32,7 +32,7 @@ class LowHPTypeBoostAbility(Ability):
 
 @dataclass(frozen=True, slots=True)
 class Torrent(LowHPTypeBoostAbility):
-    name = "Torrent"
+    name = "TORRENT"
 
 
 TORRENT = Torrent(
@@ -42,7 +42,7 @@ TORRENT = Torrent(
 
 @dataclass(frozen=True, slots=True)
 class Overgrow(LowHPTypeBoostAbility):
-    name = "Overgrow"
+    name = "OVERGROW"
 
 
 OVERGROW = Overgrow(
@@ -52,7 +52,7 @@ OVERGROW = Overgrow(
 
 @dataclass(frozen=True, slots=True)
 class Blaze(LowHPTypeBoostAbility):
-    name = "Blaze"
+    name = "BLAZE"
 
 
 BLAZE = Blaze(boost_type=Type.FIRE)
