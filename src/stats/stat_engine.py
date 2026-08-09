@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from enum import Enum, auto
 from typing import TYPE_CHECKING
 
-from battle.battle_context import BattleContext
-from move import MoveCategory
+from move.move_category import MoveCategory
 from move.move_context import MoveContext
 from stats.stat import Stat
 from stats.stat_utils import get_stage, stage_multiplier
 from status_condition import StatusCondition
 
 if TYPE_CHECKING:
+    from battle.battle_context import BattleContext
     from pokemon import Pokemon
 
 
@@ -18,7 +20,7 @@ class StatRole(Enum):
 
 
 def get_effective_stat(
-    pokemon: "Pokemon",
+    pokemon: Pokemon,
     stat: Stat,
     role: StatRole,
     battle_context: BattleContext,
