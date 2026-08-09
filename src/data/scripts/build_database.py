@@ -9,6 +9,7 @@ from typing import Any
 import requests
 
 from database.ability_importer import AbilityImporter
+from database.item_importer import ItemImporter
 from database.learnset_importer import LearnsetImporter
 from database.move_importer import MoveImporter
 from database.pokemon_importer import PokemonImporter
@@ -26,11 +27,13 @@ RAW_POKEMON_DIR = RAW_DATA_DIR / "pokemon"
 RAW_SPECIES_DIR = RAW_DATA_DIR / "species"
 RAW_MOVE_DIR = RAW_DATA_DIR / "moves"
 RAW_ABILITY_DIR = RAW_DATA_DIR / "abilities"
+RAW_ITEM_DIR = RAW_DATA_DIR / "items"
 
 GENERATED_POKEMON_DIR = GENERATED_DATA_DIR / "pokemon"
 GENERATED_MOVE_DIR = GENERATED_DATA_DIR / "moves"
 GENERATED_LEARNSET_DIR = GENERATED_DATA_DIR / "learnsets" / TARGET_VERSION_GROUP
 GENERATED_ABILITY_DIR = GENERATED_DATA_DIR / "abilities"
+GENERATED_ITEM_DIR = GENERATED_DATA_DIR / "items"
 
 
 for directory in (
@@ -42,6 +45,8 @@ for directory in (
     GENERATED_LEARNSET_DIR,
     RAW_ABILITY_DIR,
     GENERATED_ABILITY_DIR,
+    RAW_ITEM_DIR,
+    GENERATED_ITEM_DIR,
 ):
     directory.mkdir(
         parents=True,
@@ -188,8 +193,6 @@ def build_pokemon(
         force=force,
     )
 
-    pokemon_raw = get_pokemon(name)
-
     species_name = pokemon_raw["species"]["name"]
 
     species_raw = get_species(species_name)
@@ -262,6 +265,24 @@ def build_ability(
     )
 
 
+def build_item(
+    name: str,
+    force: bool = False,
+) -> None:
+    print(f"\nBuilding item: {name}")
+
+    item_raw = get_item(
+        name,
+        force=force,
+    )
+    item_entry = ItemImporter().to_database_model(item_raw)
+
+    save_json(
+        item_entry,
+        GENERATED_ITEM_DIR / f"{name}.json",
+    )
+
+
 def get_ability(
     name: str,
     force: bool = False,
@@ -269,6 +290,17 @@ def get_ability(
     return fetch_cached(
         f"ability/{name}",
         RAW_ABILITY_DIR / f"{name}.json",
+        force=force,
+    )
+
+
+def get_item(
+    name: str,
+    force: bool = False,
+) -> dict[str, Any]:
+    return fetch_cached(
+        f"item/{name}",
+        RAW_ITEM_DIR / f"{name}.json",
         force=force,
     )
 
@@ -323,6 +355,19 @@ def build_all_abilities() -> None:
         build_ability(name)
 
 
+def build_all_items() -> None:
+    item_names = get_index(
+        "item?limit=100000",
+        "item_index.json",
+    )
+
+    total = len(item_names)
+
+    for index, name in enumerate(item_names, start=1):
+        print(f"\n[{index}/{total}] Building item: {name}")
+        build_item(name)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build the PokeCarlo JSON database.",
@@ -368,6 +413,18 @@ def parse_args() -> argparse.Namespace:
         help="Build every ability.",
     )
 
+    parser.add_argument(
+        "--item",
+        nargs="+",
+        help="Build specific items.",
+    )
+
+    parser.add_argument(
+        "--all-items",
+        action="store_true",
+        help="Build every item.",
+    )
+
     return parser.parse_args()
 
 
@@ -404,6 +461,16 @@ def main() -> None:
     if args.all_abilities:
         build_all_abilities()
 
+    if args.item:
+        for name in args.item:
+            build_item(
+                name,
+                force=args.force,
+            )
+
+    if args.all_items:
+        build_all_items()
+
     if not any(
         (
             args.pokemon,
@@ -412,6 +479,8 @@ def main() -> None:
             args.all_moves,
             args.ability,
             args.all_abilities,
+            args.item,
+            args.all_items,
         )
     ):
         print("Nothing selected. Use --help for options.")
