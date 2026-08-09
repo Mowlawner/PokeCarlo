@@ -30,7 +30,7 @@ def garchomp_species(rough_skin, sand_veil) -> Species:
             sp_defense=85,
             speed=102,
         ),
-        abilities=(rough_skin.name, sand_veil.name),
+        abilities=("ROUGH_SKIN", "SAND_VEIL"),
     )
 
 
@@ -51,7 +51,7 @@ def gyarados_species(intimidate, moxie) -> Species:
             sp_defense=100,
             speed=81,
         ),
-        abilities=(intimidate.name, moxie.name),
+        abilities=("INTIMIDATE", "MOXIE"),
     )
 
 
@@ -75,7 +75,7 @@ def tyranitar_species(sand_stream, unnerve) -> Species:
             sp_defense=100,
             speed=61,
         ),
-        abilities=(sand_stream.name, unnerve.name),
+        abilities=("SAND_STREAM", "UNNERVE"),
     )
 
 
@@ -86,7 +86,7 @@ def tyranitar_species(sand_stream, unnerve) -> Species:
 def jolly_garchomp_set(
     garchomp_species: Species, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
-    return PokemonSet(
+    return PokemonSet.from_components(
         species=garchomp_species,
         level=50,
         nature=Nature.JOLLY,
@@ -107,6 +107,15 @@ def jolly_garchomp_set(
             speed=252,
         ),
         moves=(tackle,),
+        learnset=frozenset(
+            {
+                "TACKLE",
+                "EARTHQUAKE",
+                "DRAGON_CLAW",
+                "SWORDS_DANCE",
+                "HIGH_HORSEPOWER",
+            }
+        ),
         ability=rough_skin,
     )
 
@@ -115,7 +124,7 @@ def jolly_garchomp_set(
 def jolly_gyarados_set(
     gyarados_species: Species, tackle: Move, intimidate: Ability
 ) -> PokemonSet:
-    return PokemonSet(
+    return PokemonSet.from_components(
         species=gyarados_species,
         level=50,
         nature=Nature.JOLLY,
@@ -136,6 +145,7 @@ def jolly_gyarados_set(
             speed=252,
         ),
         moves=(tackle,),
+        learnset=frozenset({"TACKLE"}),
         ability=intimidate,
     )
 
@@ -144,7 +154,7 @@ def jolly_gyarados_set(
 def adamant_garchomp_set(
     garchomp_species: Species, tackle: Move, rough_skin: Ability
 ) -> PokemonSet:
-    return PokemonSet(
+    return PokemonSet.from_components(
         species=garchomp_species,
         level=50,
         nature=Nature.ADAMANT,
@@ -165,6 +175,7 @@ def adamant_garchomp_set(
             speed=252,
         ),
         moves=(tackle,),
+        learnset=frozenset({"TACKLE"}),
         ability=rough_skin,
     )
 
@@ -175,7 +186,7 @@ def bulky_tyranitar_set(
     tackle,
     sand_stream,
 ):
-    return PokemonSet(
+    return PokemonSet.from_components(
         species=tyranitar_species,
         level=50,
         nature=Nature.ADAMANT,
@@ -196,6 +207,7 @@ def bulky_tyranitar_set(
             speed=0,
         ),
         moves=(tackle,),
+        learnset=frozenset({"TACKLE"}),
         ability=sand_stream,
     )
 
