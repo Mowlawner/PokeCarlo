@@ -23,6 +23,74 @@ def test_battle_resolver_applies_action(
     assert opponent_garchomp.current_hp < starting_hp
 
 
+def test_battle_resolver_returns_move_execution_result(
+    battle_resolver,
+    garchomp,
+    opponent_garchomp,
+    tackle,
+):
+    action = MoveAction(
+        actor=garchomp,
+        move=tackle,
+        target=opponent_garchomp,
+    )
+
+    results = battle_resolver.resolve_turn(actions=(action,))
+
+    assert len(results) == 1
+    assert results[0][0] is action
+    assert results[0][1] is not None
+    assert results[0][1].applied
+
+
+def test_battle_resolver_returns_swords_dance_result(
+    battle_resolver,
+    garchomp,
+    opponent_garchomp,
+    swords_dance,
+):
+    action = MoveAction(
+        actor=garchomp,
+        move=swords_dance,
+        target=opponent_garchomp,
+    )
+
+    results = battle_resolver.resolve_turn(actions=(action,))
+
+    assert results[0][0] is action
+    assert results[0][1] is not None
+    assert (
+        results[0][1].effect_results[0].stat_stage_changes[0].target
+        is opponent_garchomp
+    )
+    assert results[0][1].effect_results[0].stat_stage_changes[0].amount == 2
+
+
+def test_battle_resolver_preserves_resolved_action_order(
+    battle_resolver,
+    garchomp,
+    opponent_garchomp,
+    protect,
+    swords_dance,
+):
+    lower_priority_action = MoveAction(
+        actor=opponent_garchomp,
+        move=swords_dance,
+        target=garchomp,
+    )
+    higher_priority_action = MoveAction(actor=garchomp, move=protect)
+
+    results = battle_resolver.resolve_turn(
+        actions=(lower_priority_action, higher_priority_action),
+    )
+
+    assert [action for action, _ in results] == [
+        higher_priority_action,
+        lower_priority_action,
+    ]
+    assert all(result is not None for _, result in results)
+
+
 def test_battle_resolver_applies_multiple_actions(
     battle_resolver,
     garchomp,

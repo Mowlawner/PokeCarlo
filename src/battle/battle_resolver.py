@@ -1,5 +1,6 @@
 from battle.action import Action
 from battle.battle_context import BattleContext
+from move.move import MoveExecutionResult
 
 
 class BattleResolver:
@@ -9,7 +10,7 @@ class BattleResolver:
     def resolve_turn(
         self,
         actions: tuple[Action, ...],
-    ) -> None:
+    ) -> tuple[tuple[Action, MoveExecutionResult | None], ...]:
         """
         Resolve all actions for a single battle turn.
 
@@ -19,19 +20,26 @@ class BattleResolver:
 
         Pending forced switches are detected after resolution, but actual
         replacement selection is handled elsewhere.
+
+        Returns:
+            Action/result pairs in the order the actions were resolved. Actions
+            that do not produce a move execution result return ``None``.
         """
         remaining_actions = list(actions)
+        execution_results: list[tuple[Action, MoveExecutionResult | None]] = []
 
         while remaining_actions:
             action = self.get_next_action(remaining_actions)
             remaining_actions.remove(action)
 
-            action.apply(self.context)
+            execution_results.append((action, action.apply(self.context)))
 
             self.handle_faints()
 
         self.handle_faints()
         self.handle_pending_switches()
+
+        return tuple(execution_results)
 
     def get_next_action(
         self,
