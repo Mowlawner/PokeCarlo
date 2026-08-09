@@ -1,4 +1,6 @@
-from fixtures.abilities import *
-from fixtures.battle_fixtures import *
-from fixtures.moves import *
-from fixtures.pokemon_fixtures import *
+pytest_plugins = (
+    "fixtures.abilities",
+    "fixtures.battle_fixtures",
+    "fixtures.moves",
+    "fixtures.pokemon_fixtures",
+)

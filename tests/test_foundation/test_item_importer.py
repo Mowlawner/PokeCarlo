@@ -1,5 +1,3 @@
-import pytest
-
 from database.item_importer import ItemImporter
 
 
@@ -40,9 +38,12 @@ def test_item_importer_uses_canonical_api_name_not_display_name():
     assert result["display_name"] == "Localized Presentation"
 
 
-def test_item_importer_requires_english_name():
+def test_item_importer_falls_back_when_english_name_is_missing():
     data = item_data()
-    data["names"] = [{"language": {"name": "fr"}, "name": "Restes"}]
+    data["name"] = "clefablite"
+    data["names"] = []
 
-    with pytest.raises(ValueError, match="no English name"):
-        ItemImporter().to_database_model(data)
+    result = ItemImporter().to_database_model(data)
+
+    assert result["item_name"] == "CLEFABLITE"
+    assert result["display_name"] == "Clefablite"

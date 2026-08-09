@@ -3,6 +3,7 @@ from dataclasses import FrozenInstanceError, fields, replace
 import pytest
 
 from ability import Ability
+from item import Item
 from pokemon import Pokemon
 from pokemon_set import PokemonSet
 from stats.stat_stages import StatStages
@@ -173,6 +174,7 @@ def test_pokemon_set_does_not_store_learnset(jolly_garchomp_set):
         "evs",
         "moves",
         "ability",
+        "item",
     }
 
 
@@ -186,6 +188,49 @@ def test_pokemon_from_set_calculates_stats(jolly_garchomp_set):
 
     assert pokemon.stats.speed == 169
     assert pokemon.stats.attack == 182
+
+
+def test_pokemon_set_defaults_to_no_item(jolly_garchomp_set):
+    assert jolly_garchomp_set.item is None
+
+
+def test_pokemon_set_can_store_an_item(jolly_garchomp_set):
+    item = Item(
+        name="LEFTOVERS",
+        display_name="Leftovers",
+        id=211,
+        category="HELD_ITEMS",
+        attributes=("HOLDABLE", "HOLDABLE_ACTIVE"),
+    )
+
+    configured_set = replace(jolly_garchomp_set, item=item)
+
+    assert configured_set.item is item
+
+
+def test_pokemon_from_set_preserves_item(jolly_garchomp_set):
+    item = Item(
+        name="LEFTOVERS",
+        display_name="Leftovers",
+        id=211,
+        category="HELD_ITEMS",
+        attributes=("HOLDABLE", "HOLDABLE_ACTIVE"),
+    )
+    configured_set = replace(jolly_garchomp_set, item=item)
+
+    pokemon_with_item = Pokemon.from_set(configured_set)
+    pokemon_without_item = Pokemon.from_set(jolly_garchomp_set)
+
+    assert pokemon_with_item.pokemon_set.item is item
+    assert pokemon_without_item.pokemon_set.item is None
+
+
+def test_pokemon_set_item_is_immutable(jolly_garchomp_set):
+    item = Item("LEFTOVERS", "Leftovers", 211, "HELD_ITEMS", ())
+    configured_set = replace(jolly_garchomp_set, item=item)
+
+    with pytest.raises(FrozenInstanceError):
+        configured_set.item = None
 
 
 def test_negative_hp_is_fainted(jolly_garchomp_set):

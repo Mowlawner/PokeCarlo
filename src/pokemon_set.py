@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from ability import Ability
+from item import Item
 from move import Move
 from pokemon_species import Species
 from stats.evs import EVs
@@ -24,6 +25,8 @@ class PokemonSet:
 
     ability: Ability
 
+    item: Item | None = None
+
     @classmethod
     def from_components(
         cls,
@@ -36,6 +39,7 @@ class PokemonSet:
         moves: tuple[Move, ...],
         ability: Ability,
         learnset: frozenset[str],
+        item: Item | None = None,
     ) -> "PokemonSet":
         cls._validate_learnset(species, moves, learnset)
         return cls(
@@ -46,6 +50,7 @@ class PokemonSet:
             evs=evs,
             moves=moves,
             ability=ability,
+            item=item,
         )
 
     def __post_init__(self) -> None:

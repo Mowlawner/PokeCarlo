@@ -13,7 +13,10 @@ class ItemImporter:
         return {
             "item_id": item_data["id"],
             "item_name": self._canonical_name(item_data["name"]),
-            "display_name": self._get_english_name(item_data["names"]),
+            "display_name": self._get_english_name(
+                item_data["names"],
+                item_data["name"],
+            ),
             "category": self._canonical_name(item_data["category"]["name"]),
             "attributes": sorted(
                 self._canonical_name(attribute["name"])
@@ -24,12 +27,13 @@ class ItemImporter:
     def _get_english_name(
         self,
         names: list[dict[str, Any]],
+        item_name: str,
     ) -> str:
         for entry in names:
             if entry["language"]["name"] == "en":
                 return entry["name"]
 
-        raise ValueError("Item has no English name.")
+        return item_name.replace("-", " ").replace("_", " ").title()
 
     def _canonical_name(self, name: str) -> str:
         return name.upper().replace("-", "_").replace(" ", "_")
