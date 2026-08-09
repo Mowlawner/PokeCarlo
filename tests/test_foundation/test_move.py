@@ -295,6 +295,50 @@ def test_move_apply_executes_damage_effect(
     assert opponent_garchomp.current_hp < starting_hp
 
 
+def test_move_apply_returns_effect_results_for_swords_dance(
+    garchomp, swords_dance, battle_context
+):
+    result = swords_dance.apply(
+        user=garchomp,
+        targets=(garchomp,),
+        battle_context=battle_context,
+    )
+
+    assert result.applied
+    assert result.effect_results[0].stat_stage_changes[0].amount == 2
+    assert garchomp.stat_stages.attack == 2
+    assert garchomp.current_hp == garchomp.stats.hp
+
+
+def test_move_apply_accuracy_failure_skips_stat_change(
+    garchomp, swords_dance, battle_state
+):
+    rng = StubRNG(accuracy_rolls=[0.99])
+    inaccurate_swords_dance = Move(
+        name=swords_dance.name,
+        display_name=swords_dance.display_name,
+        id=swords_dance.id,
+        accuracy=50,
+        pp=swords_dance.pp,
+        power=swords_dance.power,
+        move_type=swords_dance.move_type,
+        category=swords_dance.category,
+        effects=swords_dance.effects,
+        move_flags=swords_dance.move_flags,
+        targeting=swords_dance.targeting,
+        priority=swords_dance.priority,
+    )
+
+    result = inaccurate_swords_dance.apply(
+        user=garchomp,
+        targets=(garchomp,),
+        battle_context=BattleContext(battle_state, rng),
+    )
+
+    assert not result.applied
+    assert garchomp.stat_stages.attack == 0
+
+
 def test_move_applies_effect_when_accuracy_check_succeeds(
     garchomp,
     opponent_garchomp,

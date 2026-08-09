@@ -5,7 +5,9 @@ import pytest
 from database.move_database import MoveDatabase
 from move.move_category import MoveCategory
 from move_effects.damage_effect import DamageEffect
+from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_types import Type
+from stats.stat import Stat
 
 
 def test_load_move_database(tmp_path):
@@ -98,3 +100,34 @@ def test_load_move_invalid_target(tmp_path):
 
     with pytest.raises(KeyError, match="INVALID_TARGET"):
         MoveDatabase.load(move_dir)
+
+
+def test_load_move_database_constructs_explicit_stat_change_effect(tmp_path):
+    move_dir = tmp_path / "moves"
+    move_dir.mkdir()
+    (move_dir / "swords-dance.json").write_text(
+        json.dumps(
+            {
+                "accuracy": None,
+                "category": "STATUS",
+                "display_name": "Swords Dance",
+                "effects": [{"type": "stat_change", "stat": "ATTACK", "stages": 2}],
+                "id": 14,
+                "move_flags": [],
+                "move_name": "SWORDS_DANCE",
+                "move_type": "NORMAL",
+                "power": None,
+                "pp": 20,
+                "priority": 0,
+                "target": "SELF",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    move = MoveDatabase.load(move_dir).get("SWORDS_DANCE")
+
+    assert len(move.effects) == 1
+    assert isinstance(move.effects[0], StatChangeEffect)
+    assert move.effects[0].stat is Stat.ATTACK
+    assert move.effects[0].stages == 2

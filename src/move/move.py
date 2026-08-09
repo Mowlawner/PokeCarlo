@@ -8,7 +8,7 @@ from move.move_category import MoveCategory
 from move.move_context import MoveContext
 from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect, resolve_defaults
-from move_effects.move_effect import MoveEffect
+from move_effects.move_effect import MoveEffect, MoveEffectResult
 from pokemon_types import Type
 
 if TYPE_CHECKING:
@@ -64,14 +64,27 @@ class Move:
         user: Pokemon,
         targets: tuple[Pokemon, ...],
         battle_context: BattleContext,
-    ) -> None:
+    ) -> MoveExecutionResult:
         successful_targets = tuple(
             target for target in targets if self.hits(rng=battle_context.rng)
         )
-        for effect in self.effects:
+        effect_results = tuple(
             effect.apply(
                 user=user,
                 targets=successful_targets,
                 move_context=MoveContext(self.move_type, self.category),
                 battle_context=battle_context,
             )
+            for effect in self.effects
+        )
+
+        return MoveExecutionResult(effect_results=effect_results)
+
+
+@dataclass(frozen=True, slots=True)
+class MoveExecutionResult:
+    effect_results: tuple[MoveEffectResult, ...]
+
+    @property
+    def applied(self) -> bool:
+        return any(result.applied for result in self.effect_results)

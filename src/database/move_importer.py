@@ -56,7 +56,7 @@ class MoveImporter:
                 self._canonical_name(flag["name"])
                 for flag in move_data.get("flags", [])
             ],
-            "effects": [],
+            "effects": move_data.get("effects", []),
         }
 
     def _canonical_name(
