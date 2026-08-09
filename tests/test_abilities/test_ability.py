@@ -18,7 +18,7 @@ from stats.stat_engine import StatRole
 def test_ability_can_be_created():
     ability = BLAZE
 
-    assert ability.name == "Blaze"
+    assert ability.name == "BLAZE"
 
 
 def test_ability_is_immutable():
