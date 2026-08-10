@@ -17,9 +17,23 @@ class StatStageChange:
 
 
 @dataclass(frozen=True, slots=True)
+class DamageDealt:
+    target: "Pokemon"
+    amount: int
+
+
+@dataclass(frozen=True, slots=True)
+class HPRecovered:
+    target: "Pokemon"
+    amount: int
+
+
+@dataclass(frozen=True, slots=True)
 class MoveEffectResult:
     applied: bool
     stat_stage_changes: tuple[StatStageChange, ...] = ()
+    damage_dealt: tuple[DamageDealt, ...] = ()
+    hp_restored: tuple[HPRecovered, ...] = ()
 
 
 class MoveEffect(Protocol):
@@ -29,4 +43,5 @@ class MoveEffect(Protocol):
         targets: tuple["Pokemon", ...],
         move_context: MoveContext,
         battle_context: "BattleContext",
+        prior_results: tuple[MoveEffectResult, ...] = (),
     ) -> MoveEffectResult: ...

@@ -11,6 +11,7 @@ from database.learnset_database import LearnsetDatabase
 from database.move_database import MoveDatabase
 from database.species_database import SpeciesDatabase
 from move_effects.damage_effect import DamageEffect
+from move_effects.healing_effect import HealingEffect
 from pokemon import Pokemon
 from pokemon_set_resolver import PokemonSetResolver
 from stats.evs import EVs
@@ -195,3 +196,87 @@ def test_database_resolved_swords_dance_executes_through_battle(
 
     assert attacker.stat_stages.attack == 2
     assert attacker.current_hp == attacker.stats.hp
+
+
+def test_database_resolved_drain_punch_heals_from_actual_damage(
+    tmp_path,
+    garchomp,
+    garchomp_species,
+):
+    move_directory = tmp_path / "moves"
+    move_directory.mkdir()
+    (move_directory / "drain-punch.json").write_text(
+        json.dumps(
+            {
+                "accuracy": 100,
+                "category": "PHYSICAL",
+                "display_name": "Drain Punch",
+                "effects": [
+                    {"type": "damage", "power": 40},
+                    {"type": "heal_from_damage", "healing_percent": 50},
+                ],
+                "id": 4096,
+                "move_flags": [],
+                "move_name": "DRAIN_PUNCH",
+                "move_type": "FIGHTING",
+                "power": 40,
+                "pp": 10,
+                "priority": 0,
+                "target": "SINGLE_TARGET",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    resolver = PokemonSetResolver(
+        species_database=SpeciesDatabase({garchomp_species.name: garchomp_species}),
+        ability_database=AbilityDatabase(
+            {garchomp.pokemon_set.ability.name: garchomp.pokemon_set.ability}
+        ),
+        move_database=MoveDatabase.load(move_directory),
+        item_database=ItemDatabase({}),
+        learnset_database=LearnsetDatabase(
+            {garchomp_species.name: frozenset({"DRAIN_PUNCH"})}
+        ),
+    )
+    pokemon_set = resolver.resolve(
+        species_name=garchomp_species.name,
+        ability_name=garchomp.pokemon_set.ability.name,
+        move_names=("DRAIN_PUNCH",),
+        level=garchomp.pokemon_set.level,
+        nature=garchomp.pokemon_set.nature,
+        ivs=garchomp.pokemon_set.ivs,
+        evs=garchomp.pokemon_set.evs,
+    )
+    attacker = Pokemon.from_set(pokemon_set)
+    target = Pokemon.from_set(pokemon_set)
+    attacker.current_hp = attacker.stats.hp - 20
+    target.current_hp = 10
+
+    move = attacker.pokemon_set.moves[0]
+    assert isinstance(move.effects[0], DamageEffect)
+    assert isinstance(move.effects[1], HealingEffect)
+
+    state = BattleState(player_active=(attacker,), opponent_active=(target,))
+    context = BattleContext(
+        state=state,
+        rng=StubRNG(
+            accuracy_rolls=[0.0],
+            critical_rolls=[1.0],
+            damage_rolls=[1.0],
+        ),
+    )
+    action = next(
+        action
+        for action in get_legal_actions(battle_context=context, pokemon=attacker)
+        if isinstance(action, MoveAction)
+    )
+    action.target = target
+
+    execution = BattleResolver(context).resolve_turn(actions=(action,))[0][1]
+
+    assert execution is not None
+    assert target.current_hp == 0
+    assert attacker.current_hp == attacker.stats.hp - 15
+    assert execution.effect_results[0].damage_dealt[0].amount == 10
+    assert execution.effect_results[1].hp_restored[0].amount == 5

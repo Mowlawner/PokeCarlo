@@ -6,6 +6,7 @@ from battle.battle_context import BattleContext
 from battle.stub_rng import StubRNG
 from move import Move, MoveCategory, MoveTarget
 from move_effects.damage_effect import DamageEffect
+from move_effects.move_effect import MoveEffectResult
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_types import Type
 from stats.stat import Stat
@@ -276,6 +277,46 @@ def test_move_can_have_multiple_effects():
     assert len(move.effects) == 2
     assert isinstance(move.effects[0], DamageEffect)
     assert isinstance(move.effects[1], StatChangeEffect)
+
+
+def test_move_passes_prior_effect_results_in_order(garchomp, battle_context):
+    received_prior_results = []
+
+    class RecordingEffect:
+        def __init__(self, result):
+            self.result = result
+
+        def apply(
+            self,
+            *,
+            user,
+            targets,
+            move_context,
+            battle_context,
+            prior_results=(),
+        ):
+            received_prior_results.append(prior_results)
+            return self.result
+
+    first_result = MoveEffectResult(applied=True)
+    second_result = MoveEffectResult(applied=False)
+    move = Move(
+        name="TEST_MOVE",
+        display_name="Test Move",
+        id=9999,
+        accuracy=None,
+        pp=1,
+        power=None,
+        move_type=Type.NORMAL,
+        category=MoveCategory.STATUS,
+        effects=(RecordingEffect(first_result), RecordingEffect(second_result)),
+        move_flags=(),
+    )
+
+    result = move.apply(user=garchomp, targets=(garchomp,), battle_context=battle_context)
+
+    assert received_prior_results == [(), (first_result,)]
+    assert result.effect_results == (first_result, second_result)
 
 
 def test_move_apply_executes_damage_effect(
