@@ -10,8 +10,10 @@ from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect
 from move_effects.healing_effect import HealingEffect
 from move_effects.stat_change_effect import StatChangeEffect
+from move_effects.status_effect import StatusEffect
 from pokemon_types import Type
 from stats.stat import Stat
+from status_condition import StatusCondition
 
 
 class MoveDatabase:
@@ -88,6 +90,8 @@ class MoveDatabase:
                 healing_percent=effect_data.get("healing_percent", 50),
                 aggregate_damage=effect_data.get("aggregate_damage", False),
             )
+        if effect_data["type"] == "status":
+            return StatusEffect(status=StatusCondition[effect_data["status"]])
 
         raise ValueError(f"Unsupported move effect: {effect_data['type']}")
 

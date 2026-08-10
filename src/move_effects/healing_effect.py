@@ -27,9 +27,7 @@ class HealingEffect:
         prior_results: tuple[MoveEffectResult, ...] = (),
     ) -> MoveEffectResult:
         damage_records = tuple(
-            damage
-            for result in prior_results
-            for damage in result.damage_dealt
+            damage for result in prior_results for damage in result.damage_dealt
         )
         if not damage_records:
             return MoveEffectResult(applied=False)
