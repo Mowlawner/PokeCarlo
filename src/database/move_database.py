@@ -8,6 +8,7 @@ from move.move import Move
 from move.move_category import MoveCategory
 from move.targeting import MoveTarget
 from move_effects.damage_effect import DamageEffect
+from move_effects.healing_effect import HealingEffect
 from move_effects.stat_change_effect import StatChangeEffect
 from pokemon_types import Type
 from stats.stat import Stat
@@ -79,6 +80,13 @@ class MoveDatabase:
             return StatChangeEffect(
                 stat=Stat[effect_data["stat"]],
                 stages=effect_data["stages"],
+            )
+        if effect_data["type"] == "damage":
+            return DamageEffect(power=effect_data["power"])
+        if effect_data["type"] == "heal_from_damage":
+            return HealingEffect(
+                healing_percent=effect_data.get("healing_percent", 50),
+                aggregate_damage=effect_data.get("aggregate_damage", False),
             )
 
         raise ValueError(f"Unsupported move effect: {effect_data['type']}")

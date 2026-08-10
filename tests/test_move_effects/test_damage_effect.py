@@ -4,6 +4,7 @@ from battle.stub_rng import StubRNG
 from move import MoveCategory
 from move.move_context import MoveContext
 from move_effects.damage_effect import DamageEffect, resolve_defaults
+from move_effects.move_effect import DamageDealt
 from stats.stat import Stat
 from stats.stat_utils import modify_stage
 from status_condition import StatusCondition
@@ -85,6 +86,63 @@ def test_damage_effect_reduces_hp(
         )
 
     assert garchomp.current_hp < starting_hp
+
+
+def test_damage_effect_reports_actual_damage_for_each_target(
+    garchomp,
+    opponent_garchomp,
+    second_opponent_garchomp,
+    rock_slide,
+    battle_state,
+):
+    opponent_garchomp.current_hp = 10
+    second_opponent_garchomp.current_hp = 100
+    result = rock_slide.apply(
+        user=garchomp,
+        targets=(opponent_garchomp, second_opponent_garchomp),
+        battle_context=BattleContext(
+            battle_state,
+            StubRNG(
+                accuracy_rolls=[0.0, 0.0],
+                damage_rolls=[1.0, 1.0],
+                critical_rolls=[1.0, 1.0],
+            ),
+        ),
+    )
+
+    damage_dealt = result.effect_results[0].damage_dealt
+    assert [record.target for record in damage_dealt] == [
+        opponent_garchomp,
+        second_opponent_garchomp,
+    ]
+    assert damage_dealt[0].amount == 10
+    assert damage_dealt[1].amount > 0
+
+
+def test_damage_effect_reports_zero_damage_for_type_immunity(
+    garchomp, gyarados, earthquake, battle_context
+):
+    result = earthquake.apply(
+        user=garchomp,
+        targets=(gyarados,),
+        battle_context=battle_context,
+    )
+
+    assert result.effect_results[0].damage_dealt == (
+        DamageDealt(target=gyarados, amount=0),
+    )
+
+
+def test_damage_effect_reports_no_records_for_accuracy_misses(
+    garchomp, opponent_garchomp, high_horsepower, battle_state
+):
+    result = high_horsepower.apply(
+        user=garchomp,
+        targets=(opponent_garchomp,),
+        battle_context=BattleContext(battle_state, StubRNG(accuracy_rolls=[0.99])),
+    )
+
+    assert result.effect_results[0].damage_dealt == ()
 
 
 def test_damage_effect_uses_attack_stat_stage(

@@ -50,5 +50,12 @@ class Pokemon:
     def is_fainted(self) -> bool:
         return self.current_hp <= 0
 
-    def take_damage(self, amount: int) -> None:
+    def take_damage(self, amount: int) -> int:
+        previous_hp = self.current_hp
         self.current_hp = max(0, self.current_hp - amount)
+        return previous_hp - self.current_hp
+
+    def restore_hp(self, amount: int) -> int:
+        previous_hp = self.current_hp
+        self.current_hp = min(self.stats.hp, self.current_hp + amount)
+        return self.current_hp - previous_hp

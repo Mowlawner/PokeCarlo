@@ -68,17 +68,21 @@ class Move:
         successful_targets = tuple(
             target for target in targets if self.hits(rng=battle_context.rng)
         )
-        effect_results = tuple(
-            effect.apply(
+        effect_results = []
+        prior_results = ()
+        move_context = MoveContext(self.move_type, self.category)
+        for effect in self.effects:
+            result = effect.apply(
                 user=user,
                 targets=successful_targets,
-                move_context=MoveContext(self.move_type, self.category),
+                move_context=move_context,
                 battle_context=battle_context,
+                prior_results=prior_results,
             )
-            for effect in self.effects
-        )
+            effect_results.append(result)
+            prior_results = tuple(effect_results)
 
-        return MoveExecutionResult(effect_results=effect_results)
+        return MoveExecutionResult(effect_results=tuple(effect_results))
 
 
 @dataclass(frozen=True, slots=True)

@@ -31,6 +31,7 @@ class StatChangeEffect:
         targets: tuple["Pokemon", ...],
         move_context: MoveContext,
         battle_context: BattleContext,
+        prior_results: tuple[MoveEffectResult, ...] = (),
     ) -> MoveEffectResult:
         changes = []
         for target in targets:
