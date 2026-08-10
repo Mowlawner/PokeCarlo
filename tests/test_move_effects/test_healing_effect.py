@@ -16,9 +16,7 @@ def test_healing_consumes_actual_prior_damage(garchomp, tackle, battle_context):
         targets=(),
         move_context=MoveContext(tackle.move_type, tackle.category),
         battle_context=battle_context,
-        prior_results=(
-            damage_result(DamageDealt(target=garchomp, amount=11)),
-        ),
+        prior_results=(damage_result(DamageDealt(target=garchomp, amount=11)),),
     )
 
     assert garchomp.current_hp == garchomp.stats.hp - 15
@@ -36,9 +34,7 @@ def test_healing_uses_actual_damage_not_nominal_damage(
         targets=(),
         move_context=MoveContext(tackle.move_type, tackle.category),
         battle_context=battle_context,
-        prior_results=(
-            damage_result(DamageDealt(target=garchomp, amount=3)),
-        ),
+        prior_results=(damage_result(DamageDealt(target=garchomp, amount=3)),),
     )
 
     assert result.hp_restored[0].amount == 1
@@ -52,9 +48,7 @@ def test_healing_is_capped_at_max_hp(garchomp, tackle, battle_context):
         targets=(),
         move_context=MoveContext(tackle.move_type, tackle.category),
         battle_context=battle_context,
-        prior_results=(
-            damage_result(DamageDealt(target=garchomp, amount=100)),
-        ),
+        prior_results=(damage_result(DamageDealt(target=garchomp, amount=100)),),
     )
 
     assert result.applied
@@ -68,9 +62,7 @@ def test_zero_damage_produces_zero_healing(garchomp, tackle, battle_context):
         targets=(),
         move_context=MoveContext(tackle.move_type, tackle.category),
         battle_context=battle_context,
-        prior_results=(
-            damage_result(DamageDealt(target=garchomp, amount=0)),
-        ),
+        prior_results=(damage_result(DamageDealt(target=garchomp, amount=0)),),
     )
 
     assert not result.applied

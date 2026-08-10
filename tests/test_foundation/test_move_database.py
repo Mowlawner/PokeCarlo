@@ -6,8 +6,10 @@ from database.move_database import MoveDatabase
 from move.move_category import MoveCategory
 from move_effects.damage_effect import DamageEffect
 from move_effects.stat_change_effect import StatChangeEffect
+from move_effects.status_effect import StatusEffect
 from pokemon_types import Type
 from stats.stat import Stat
+from status_condition import StatusCondition
 
 
 def test_load_move_database(tmp_path):
@@ -131,3 +133,33 @@ def test_load_move_database_constructs_explicit_stat_change_effect(tmp_path):
     assert isinstance(move.effects[0], StatChangeEffect)
     assert move.effects[0].stat is Stat.ATTACK
     assert move.effects[0].stages == 2
+
+
+def test_load_move_database_constructs_explicit_status_effect(tmp_path):
+    move_dir = tmp_path / "moves"
+    move_dir.mkdir()
+    (move_dir / "thunder-wave.json").write_text(
+        json.dumps(
+            {
+                "accuracy": 90,
+                "category": "STATUS",
+                "display_name": "Thunder Wave",
+                "effects": [{"type": "status", "status": "PARALYSIS"}],
+                "id": 86,
+                "move_flags": [],
+                "move_name": "THUNDER_WAVE",
+                "move_type": "ELECTRIC",
+                "power": None,
+                "pp": 20,
+                "priority": 0,
+                "target": "SINGLE_TARGET",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    move = MoveDatabase.load(move_dir).get("THUNDER_WAVE")
+
+    assert len(move.effects) == 1
+    assert isinstance(move.effects[0], StatusEffect)
+    assert move.effects[0].status is StatusCondition.PARALYSIS

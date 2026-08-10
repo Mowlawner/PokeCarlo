@@ -313,7 +313,9 @@ def test_move_passes_prior_effect_results_in_order(garchomp, battle_context):
         move_flags=(),
     )
 
-    result = move.apply(user=garchomp, targets=(garchomp,), battle_context=battle_context)
+    result = move.apply(
+        user=garchomp, targets=(garchomp,), battle_context=battle_context
+    )
 
     assert received_prior_results == [(), (first_result,)]
     assert result.effect_results == (first_result, second_result)

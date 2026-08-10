@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from status_condition import StatusCondition
+
 from .common import load_json
 
 REQUIRED_MOVE_FIELDS = {
@@ -180,6 +182,22 @@ def validate_moves(
 
         if not isinstance(data["effects"], list):
             errors.append(f"{path.name}: effects is not a list")
+        else:
+            for index, effect in enumerate(data["effects"]):
+                if not isinstance(effect, dict):
+                    errors.append(f"{path.name}: effect {index} is not an object")
+                    continue
+
+                if effect.get("type") == "status":
+                    status = effect.get("status")
+                    if not isinstance(status, str):
+                        errors.append(
+                            f"{path.name}: status effect {index} is missing status"
+                        )
+                    elif status not in StatusCondition.__members__:
+                        errors.append(
+                            f"{path.name}: invalid status effect status {status}"
+                        )
 
         if not data["move_type"]:
             errors.append(f"{path.name}: missing move_type")

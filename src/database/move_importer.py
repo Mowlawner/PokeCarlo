@@ -56,7 +56,10 @@ class MoveImporter:
                 self._canonical_name(flag["name"])
                 for flag in move_data.get("flags", [])
             ],
-            "effects": move_data.get("effects", []),
+            "effects": [
+                self._normalize_effect(effect)
+                for effect in move_data.get("effects", [])
+            ],
         }
 
     def _canonical_name(
@@ -64,3 +67,12 @@ class MoveImporter:
         name: str,
     ) -> str:
         return name.upper().replace("-", "_")
+
+    def _normalize_effect(self, effect: dict[str, Any]) -> dict[str, Any]:
+        if effect.get("type") == "status" and "status" in effect:
+            return {
+                **effect,
+                "status": self._canonical_name(effect["status"]),
+            }
+
+        return effect
