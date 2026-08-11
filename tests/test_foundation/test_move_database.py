@@ -163,3 +163,38 @@ def test_load_move_database_constructs_explicit_status_effect(tmp_path):
     assert len(move.effects) == 1
     assert isinstance(move.effects[0], StatusEffect)
     assert move.effects[0].status is StatusCondition.PARALYSIS
+
+
+def test_load_move_database_constructs_chance_bearing_status_effect(tmp_path):
+    move_dir = tmp_path / "moves"
+    move_dir.mkdir()
+    (move_dir / "flamethrower.json").write_text(
+        json.dumps(
+            {
+                "accuracy": 100,
+                "category": "SPECIAL",
+                "display_name": "Flamethrower",
+                "effects": [
+                    {"type": "damage", "power": 90},
+                    {"type": "status", "status": "BURN", "chance": 10},
+                ],
+                "id": 53,
+                "move_flags": [],
+                "move_name": "FLAMETHROWER",
+                "move_type": "FIRE",
+                "power": 90,
+                "pp": 15,
+                "priority": 0,
+                "target": "SINGLE_TARGET",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    move = MoveDatabase.load(move_dir).get("FLAMETHROWER")
+
+    assert len(move.effects) == 2
+    assert isinstance(move.effects[0], DamageEffect)
+    assert isinstance(move.effects[1], StatusEffect)
+    assert move.effects[1].status is StatusCondition.BURN
+    assert move.effects[1].chance == 10

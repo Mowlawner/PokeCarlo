@@ -91,7 +91,10 @@ class MoveDatabase:
                 aggregate_damage=effect_data.get("aggregate_damage", False),
             )
         if effect_data["type"] == "status":
-            return StatusEffect(status=StatusCondition[effect_data["status"]])
+            return StatusEffect(
+                status=StatusCondition[effect_data["status"]],
+                chance=effect_data.get("chance"),
+            )
 
         raise ValueError(f"Unsupported move effect: {effect_data['type']}")
 

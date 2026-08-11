@@ -19,3 +19,11 @@ def test_move_importer_normalizes_status_effect_descriptor():
     )
 
     assert move["effects"] == [{"type": "status", "status": "PARALYSIS"}]
+
+
+def test_move_importer_preserves_canonical_status_chance():
+    effect = MoveImporter()._normalize_effect(
+        {"type": "status", "status": "burn", "chance": 10}
+    )
+
+    assert effect == {"type": "status", "status": "BURN", "chance": 10}
