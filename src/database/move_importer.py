@@ -70,9 +70,12 @@ class MoveImporter:
 
     def _normalize_effect(self, effect: dict[str, Any]) -> dict[str, Any]:
         if effect.get("type") == "status" and "status" in effect:
-            return {
-                **effect,
+            normalized = {
+                "type": "status",
                 "status": self._canonical_name(effect["status"]),
             }
+            if "chance" in effect:
+                normalized["chance"] = effect["chance"]
+            return normalized
 
         return effect

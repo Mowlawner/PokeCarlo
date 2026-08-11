@@ -198,6 +198,13 @@ def validate_moves(
                         errors.append(
                             f"{path.name}: invalid status effect status {status}"
                         )
+                    chance = effect.get("chance")
+                    if chance is not None and (
+                        not isinstance(chance, (int, float)) or not 0 <= chance <= 100
+                    ):
+                        errors.append(
+                            f"{path.name}: status effect {index} has invalid chance"
+                        )
 
         if not data["move_type"]:
             errors.append(f"{path.name}: missing move_type")

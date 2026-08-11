@@ -61,6 +61,44 @@ def make_thunder_wave_resolver(tmp_path, garchomp_species):
     )
 
 
+def make_flamethrower_resolver(tmp_path, garchomp_species):
+    move_directory = tmp_path / "flamethrower-moves"
+    move_directory.mkdir()
+    (move_directory / "flamethrower.json").write_text(
+        json.dumps(
+            {
+                "accuracy": 100,
+                "category": "SPECIAL",
+                "display_name": "Flamethrower",
+                "effects": [
+                    {"type": "damage", "power": 90},
+                    {"type": "status", "status": "BURN", "chance": 10},
+                ],
+                "id": 53,
+                "move_flags": [],
+                "move_name": "FLAMETHROWER",
+                "move_type": "FIRE",
+                "power": 90,
+                "pp": 15,
+                "priority": 0,
+                "target": "SINGLE_TARGET",
+            }
+        ),
+        encoding="utf-8",
+    )
+    return PokemonSetResolver(
+        species_database=SpeciesDatabase({garchomp_species.name: garchomp_species}),
+        ability_database=AbilityDatabase(
+            {"ROUGH_SKIN": Ability("ROUGH_SKIN", "Rough Skin", 17, "GENERATION_III")}
+        ),
+        move_database=MoveDatabase.load(move_directory),
+        item_database=ItemDatabase({}),
+        learnset_database=LearnsetDatabase(
+            {garchomp_species.name: frozenset({"FLAMETHROWER"})}
+        ),
+    )
+
+
 def make_battlers(resolver, garchomp_species):
     def resolve_pokemon():
         pokemon_set = resolver.resolve(
@@ -158,3 +196,45 @@ def test_thunder_wave_miss_does_not_apply_paralysis(tmp_path, garchomp_species):
     assert result is not None
     assert result.effect_results[0].status_applications == ()
     assert not result.effect_results[0].applied
+
+
+def test_database_flamethrower_executes_damage_then_independent_burn(
+    tmp_path, garchomp_species
+):
+    resolver = make_flamethrower_resolver(tmp_path, garchomp_species)
+    attacker_set = resolver.resolve(
+        species_name=garchomp_species.name,
+        ability_name="ROUGH_SKIN",
+        move_names=("FLAMETHROWER",),
+        level=50,
+        nature=Nature.JOLLY,
+        ivs=IVs(31, 31, 31, 31, 31, 31),
+        evs=EVs(6, 252, 0, 0, 0, 252),
+    )
+    target_set = resolver.resolve(
+        species_name=garchomp_species.name,
+        ability_name="ROUGH_SKIN",
+        move_names=("FLAMETHROWER",),
+        level=50,
+        nature=Nature.JOLLY,
+        ivs=IVs(31, 31, 31, 31, 31, 31),
+        evs=EVs(6, 252, 0, 0, 0, 252),
+    )
+    attacker, target = Pokemon.from_set(attacker_set), Pokemon.from_set(target_set)
+    context = BattleContext(
+        state=BattleState(player_active=(attacker,), opponent_active=(target,)),
+        rng=StubRNG(
+            accuracy_rolls=[0.0],
+            critical_rolls=[1.0],
+            damage_rolls=[1.0],
+            rolls=[0.0],
+        ),
+    )
+    action = MoveAction(attacker, attacker.pokemon_set.moves[0], target)
+
+    result = BattleResolver(context).resolve_turn((action,))[0][1]
+
+    assert result is not None
+    assert len(result.effect_results) == 2
+    assert result.effect_results[0].damage_dealt[0].amount > 0
+    assert target.status is StatusCondition.BURN
